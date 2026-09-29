@@ -27,14 +27,43 @@ namespace Servicios
 
         int? _cantidadResultados;
 
+        private readonly bool _modoAbm;
+        private int? _idSeleccionado;
+        private string _dirFiltro;
+        private string _tipoFiltro;
+        private string _estadoFiltro;
+        private decimal? _precioMinFiltro;
+        private decimal? _precioMaxFiltro;
+
         public Propiedad577MC PropiedadSeleccionada { get; private set; }
 
-        public SeleccionarPropiedad()
+        public SeleccionarPropiedad(bool modoAbm = false)
         {
+            _modoAbm = modoAbm;
             InitializeComponent();
 
             ServiceSessionManager577MC.getIntancia().Idioma.Suscribir(this);
             actualizarIdioma();
+
+            if (_modoAbm)
+            {
+                gbABM.Visible = true;
+                btnSeleccionar.Visible = false;
+                CargarCombosABM();
+            }
+            else
+            {
+                gbABM.Visible = false;
+                btnSeleccionar.Visible = true;
+
+                // Vista compacta para el modo selección (una sola pantalla, sin zona vacía)
+                this.MinimumSize = new System.Drawing.Size(930, 452);
+                this.ClientSize = new System.Drawing.Size(950, 452);
+                dgvPropiedades.Location = new System.Drawing.Point(24, 128);
+                dgvPropiedades.Size = new System.Drawing.Size(900, 280);
+                lblResultado.Location = new System.Drawing.Point(24, 420);
+                btnSeleccionar.Location = new System.Drawing.Point(810, 406);
+            }
         }
 
         private void SeleccionarPropiedad_Load(object sender, EventArgs e)
@@ -48,22 +77,24 @@ namespace Servicios
 
             try
             {
-                decimal? precioMin = LeerPrecio(txtPrecioMin.Text, "minimo");
-                decimal? precioMax = LeerPrecio(txtPrecioMax.Text, "maximo");
+                _dirFiltro = txtDireccion.Text;
+                _tipoFiltro = cboTipo.SelectedValue as string;
+                _estadoFiltro = cboEstado.SelectedValue as string;
+                _precioMinFiltro = LeerPrecio(txtPrecioMin.Text, "minimo");
+                _precioMaxFiltro = LeerPrecio(txtPrecioMax.Text, "maximo");
 
-                List<Propiedad577MC> resultado = _propiedadBLL.Buscar(
-                    txtDireccion.Text,
-                    cboTipo.SelectedValue as string,
-                    cboEstado.SelectedValue as string,
-                    precioMin,
-                    precioMax);
-
-                CargarCatalogo(resultado);
+                AplicarFiltro();
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message, t.Translate("SeleccionarPropiedad.title"), MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void AplicarFiltro()
+        {
+            List<Propiedad577MC> resultado = _propiedadBLL.Buscar(_dirFiltro, _tipoFiltro, _estadoFiltro, _precioMinFiltro, _precioMaxFiltro);
+            CargarCatalogo(resultado);
         }
 
         private void btnLimpiar_Click(object sender, EventArgs e)
@@ -73,6 +104,12 @@ namespace Servicios
             cboEstado.SelectedIndex = -1;
             txtPrecioMin.Clear();
             txtPrecioMax.Clear();
+
+            _dirFiltro = null;
+            _tipoFiltro = null;
+            _estadoFiltro = null;
+            _precioMinFiltro = null;
+            _precioMaxFiltro = null;
 
             CargarCatalogo(_propiedadBLL.ObtenerTodas());
         }
@@ -84,7 +121,22 @@ namespace Servicios
 
         private void dgvPropiedades_DoubleClick(object sender, EventArgs e)
         {
-            Seleccionar();
+            if (_modoAbm)
+            {
+                CargarABM();
+            }
+            else
+            {
+                Seleccionar();
+            }
+        }
+
+        private void dgvPropiedades_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (_modoAbm && e.RowIndex >= 0)
+            {
+                CargarABM();
+            }
         }
 
         private void CargarCatalogo(List<Propiedad577MC> propiedades)
@@ -182,6 +234,216 @@ namespace Servicios
             SeleccionarItemPorValor(cboEstado, estadoActual);
         }
 
+        private void CargarCombosABM()
+        {
+            var t = ServiceSessionManager577MC.getIntancia().Idioma;
+
+            foreach (var combo in new[] { cboTipoABM, cboEstadoABM })
+            {
+                combo.Items.Clear();
+            }
+
+            foreach (var valor in new[] { "Casa", "Departamento", "Local", "Terreno" })
+            {
+                cboTipoABM.Items.Add(new ItemCombo { Display = t.Translate("TipoPropiedad." + valor), Valor = valor });
+            }
+            cboTipoABM.DisplayMember = "Display";
+            cboTipoABM.ValueMember = "Valor";
+
+            foreach (var valor in new[] { "Disponible", "Vendida", "Alquilada", "Reservada" })
+            {
+                cboEstadoABM.Items.Add(new ItemCombo { Display = t.Translate("EstadoPropiedad." + valor), Valor = valor });
+            }
+            cboEstadoABM.DisplayMember = "Display";
+            cboEstadoABM.ValueMember = "Valor";
+        }
+
+        private void CargarABM()
+        {
+            Propiedad577MC propiedad = null;
+
+            if (dgvPropiedades.SelectedRows.Count > 0)
+            {
+                propiedad = dgvPropiedades.SelectedRows[0].DataBoundItem as Propiedad577MC;
+            }
+
+            if (propiedad == null && dgvPropiedades.CurrentRow != null)
+            {
+                propiedad = dgvPropiedades.CurrentRow.DataBoundItem as Propiedad577MC;
+            }
+
+            if (propiedad == null)
+            {
+                return;
+            }
+
+            _idSeleccionado = propiedad.Id;
+            txtDirABM.Text = propiedad.Direccion;
+            txtPrecioABM.Text = propiedad.Precio.ToString("N2", CultureInfo.CurrentCulture);
+            txtSuperficieABM.Text = propiedad.SuperficieM2.ToString("N2", CultureInfo.CurrentCulture);
+            txtAmbientesABM.Text = propiedad.Ambientes.ToString(CultureInfo.CurrentCulture);
+            txtDormitoriosABM.Text = propiedad.Dormitorios.ToString(CultureInfo.CurrentCulture);
+            txtBaniosABM.Text = propiedad.Banios.ToString(CultureInfo.CurrentCulture);
+            SeleccionarItemPorValor(cboTipoABM, propiedad.Tipo);
+            SeleccionarItemPorValor(cboEstadoABM, propiedad.Estado);
+        }
+
+        private bool LeerCamposABM(out Propiedad577MC propiedad, out string mensajeClave)
+        {
+            propiedad = null;
+            mensajeClave = null;
+
+            if (string.IsNullOrWhiteSpace(txtDirABM.Text) ||
+                cboTipoABM.SelectedIndex < 0 ||
+                cboEstadoABM.SelectedIndex < 0)
+            {
+                mensajeClave = "SeleccionarPropiedad.msgCamposObligatorios";
+                return false;
+            }
+
+            if (!decimal.TryParse(txtPrecioABM.Text.Trim(), NumberStyles.Number, CultureInfo.CurrentCulture, out decimal precio) ||
+                !decimal.TryParse(txtSuperficieABM.Text.Trim(), NumberStyles.Number, CultureInfo.CurrentCulture, out decimal superficie))
+            {
+                mensajeClave = "SeleccionarPropiedad.msgNumeroInvalido";
+                return false;
+            }
+
+            if (!int.TryParse(txtAmbientesABM.Text.Trim(), out int ambientes) ||
+                !int.TryParse(txtDormitoriosABM.Text.Trim(), out int dormitorios) ||
+                !int.TryParse(txtBaniosABM.Text.Trim(), out int banios))
+            {
+                mensajeClave = "SeleccionarPropiedad.msgNumeroInvalido";
+                return false;
+            }
+
+            propiedad = new Propiedad577MC
+            {
+                Id = _idSeleccionado ?? 0,
+                Direccion = txtDirABM.Text.Trim(),
+                Tipo = cboTipoABM.SelectedValue as string,
+                Estado = cboEstadoABM.SelectedValue as string,
+                Precio = precio,
+                SuperficieM2 = superficie,
+                Ambientes = ambientes,
+                Dormitorios = dormitorios,
+                Banios = banios
+            };
+
+            return true;
+        }
+
+        private void btnGuardarProp_Click(object sender, EventArgs e)
+        {
+            var t = ServiceSessionManager577MC.getIntancia().Idioma;
+
+            if (!LeerCamposABM(out Propiedad577MC propiedad, out string mensajeClave))
+            {
+                MessageBox.Show(t.Translate(mensajeClave), t.Translate("SeleccionarPropiedad.title"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            try
+            {
+                _propiedadBLL.RegistrarPropiedad(propiedad);
+
+                MessageBox.Show(t.Translate("SeleccionarPropiedad.msgPropiedadGuardada"), t.Translate("SeleccionarPropiedad.title"), MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                LimpiarABM();
+                AplicarFiltro();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, t.Translate("SeleccionarPropiedad.title"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnModificarProp_Click(object sender, EventArgs e)
+        {
+            var t = ServiceSessionManager577MC.getIntancia().Idioma;
+
+            if (!_idSeleccionado.HasValue)
+            {
+                MessageBox.Show(t.Translate("SeleccionarPropiedad.msgDebeSeleccionar"), t.Translate("SeleccionarPropiedad.title"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (!LeerCamposABM(out Propiedad577MC propiedad, out string mensajeClave))
+            {
+                MessageBox.Show(t.Translate(mensajeClave), t.Translate("SeleccionarPropiedad.title"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            try
+            {
+                _propiedadBLL.ModificarPropiedad(propiedad);
+
+                MessageBox.Show(t.Translate("SeleccionarPropiedad.msgPropiedadModificada"), t.Translate("SeleccionarPropiedad.title"), MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                LimpiarABM();
+                AplicarFiltro();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, t.Translate("SeleccionarPropiedad.title"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnEliminarProp_Click(object sender, EventArgs e)
+        {
+            var t = ServiceSessionManager577MC.getIntancia().Idioma;
+
+            if (!_idSeleccionado.HasValue)
+            {
+                MessageBox.Show(t.Translate("SeleccionarPropiedad.msgDebeSeleccionar"), t.Translate("SeleccionarPropiedad.title"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            DialogResult respuesta = MessageBox.Show(
+                string.Format(t.Translate("SeleccionarPropiedad.msgConfirmarEliminar"), _idSeleccionado.Value),
+                t.Translate("SeleccionarPropiedad.title"),
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
+            if (respuesta != DialogResult.Yes)
+            {
+                return;
+            }
+
+            try
+            {
+                _propiedadBLL.EliminarPropiedad(_idSeleccionado.Value);
+
+                MessageBox.Show(t.Translate("SeleccionarPropiedad.msgPropiedadEliminada"), t.Translate("SeleccionarPropiedad.title"), MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                LimpiarABM();
+                AplicarFiltro();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, t.Translate("SeleccionarPropiedad.title"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnNuevoProp_Click(object sender, EventArgs e)
+        {
+            LimpiarABM();
+            txtDirABM.Focus();
+        }
+
+        private void LimpiarABM()
+        {
+            _idSeleccionado = null;
+            txtDirABM.Clear();
+            txtPrecioABM.Clear();
+            txtSuperficieABM.Clear();
+            txtAmbientesABM.Clear();
+            txtDormitoriosABM.Clear();
+            txtBaniosABM.Clear();
+            cboTipoABM.SelectedIndex = -1;
+            cboEstadoABM.SelectedIndex = -1;
+            dgvPropiedades.ClearSelection();
+        }
+
         private static void SeleccionarItemPorValor(ComboBox combo, string valor)
         {
             if (string.IsNullOrEmpty(valor))
@@ -214,6 +476,20 @@ namespace Servicios
             btnLimpiar.Text = t.Translate("SeleccionarPropiedad.btnLimpiar");
             btnSeleccionar.Text = t.Translate("SeleccionarPropiedad.btnSeleccionar");
 
+            gbABM.Text = t.Translate("SeleccionarPropiedad.gbABM");
+            lblDirABM.Text = t.Translate("SeleccionarPropiedad.labelDireccion");
+            lblTipoABM.Text = t.Translate("SeleccionarPropiedad.labelTipo");
+            lblEstadoABM.Text = t.Translate("SeleccionarPropiedad.labelEstado");
+            lblPrecioABM.Text = t.Translate("SeleccionarPropiedad.labelPrecio");
+            lblSuperficieABM.Text = t.Translate("SeleccionarPropiedad.labelSuperficie");
+            lblAmbientesABM.Text = t.Translate("SeleccionarPropiedad.labelAmbientes");
+            lblDormitoriosABM.Text = t.Translate("SeleccionarPropiedad.labelDormitorios");
+            lblBaniosABM.Text = t.Translate("SeleccionarPropiedad.labelBanios");
+            btnGuardarProp.Text = t.Translate("SeleccionarPropiedad.btnGuardarProp");
+            btnModificarProp.Text = t.Translate("SeleccionarPropiedad.btnModificarProp");
+            btnEliminarProp.Text = t.Translate("SeleccionarPropiedad.btnEliminarProp");
+            btnNuevoProp.Text = t.Translate("SeleccionarPropiedad.btnNuevoProp");
+
             colId.HeaderText = t.Translate("SeleccionarPropiedad.colCodigo");
             colDireccion.HeaderText = t.Translate("SeleccionarPropiedad.colDireccion");
             colTipo.HeaderText = t.Translate("SeleccionarPropiedad.colTipo");
@@ -221,6 +497,7 @@ namespace Servicios
             colPrecio.HeaderText = t.Translate("SeleccionarPropiedad.colPrecio");
 
             CargarCombos();
+            CargarCombosABM();
             MostrarResultados();
         }
     }

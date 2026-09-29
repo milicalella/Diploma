@@ -63,5 +63,92 @@ namespace DAL
 
             return acceso.executeDataTable(query, parametros);
         }
+
+        public bool TieneVisitas(int idPropiedad)
+        {
+            string query = "SELECT 1 FROM Visita WHERE IdPropiedad = @idPropiedad";
+
+            var parametros = new Dictionary<string, object>
+            {
+                { "@idPropiedad", idPropiedad }
+            };
+
+            DataTable dt = acceso.executeDataTable(query, parametros);
+
+            return dt.Rows.Count > 0;
+        }
+
+        public int InsertarPropiedad(string direccion, string tipo, string estado, decimal precio, decimal superficieM2,
+            int ambientes, int dormitorios, int banios)
+        {
+            string query = @"INSERT INTO Propiedad (Direccion, Tipo, Estado, Precio, SuperficieM2, Ambientes, Dormitorios, Banios)
+                             VALUES (@direccion, @tipo, @estado, @precio, @superficieM2, @ambientes, @dormitorios, @banios);
+                             SELECT CAST(SCOPE_IDENTITY() AS int)";
+
+            var parametros = new Dictionary<string, object>
+            {
+                { "@direccion", direccion },
+                { "@tipo", tipo },
+                { "@estado", estado },
+                { "@precio", precio },
+                { "@superficieM2", superficieM2 },
+                { "@ambientes", ambientes },
+                { "@dormitorios", dormitorios },
+                { "@banios", banios }
+            };
+
+            return Convert.ToInt32(acceso.executeScalar(query, parametros));
+        }
+
+        public int ModificarPropiedad(int id, string direccion, string tipo, string estado, decimal precio, decimal superficieM2,
+            int ambientes, int dormitorios, int banios, long dvh)
+        {
+            string query = @"UPDATE Propiedad
+                             SET Direccion = @direccion, Tipo = @tipo, Estado = @estado,
+                                 Precio = @precio, SuperficieM2 = @superficieM2,
+                                 Ambientes = @ambientes, Dormitorios = @dormitorios, Banios = @banios, DVH = @dvh
+                             WHERE Id = @id";
+
+            var parametros = new Dictionary<string, object>
+            {
+                { "@id", id },
+                { "@direccion", direccion },
+                { "@tipo", tipo },
+                { "@estado", estado },
+                { "@precio", precio },
+                { "@superficieM2", superficieM2 },
+                { "@ambientes", ambientes },
+                { "@dormitorios", dormitorios },
+                { "@banios", banios },
+                { "@dvh", dvh }
+            };
+
+            return acceso.executeNonQuery(query, parametros);
+        }
+
+        public int EliminarPropiedad(int id)
+        {
+            string query = "DELETE FROM Propiedad WHERE Id = @id";
+
+            var parametros = new Dictionary<string, object>
+            {
+                { "@id", id }
+            };
+
+            return acceso.executeNonQuery(query, parametros);
+        }
+
+        public void ActualizarDVH(int id, long dvh)
+        {
+            string query = "UPDATE Propiedad SET DVH = @dvh WHERE Id = @id";
+
+            var parametros = new Dictionary<string, object>
+            {
+                { "@dvh", dvh },
+                { "@id", id }
+            };
+
+            acceso.executeNonQuery(query, parametros);
+        }
     }
 }

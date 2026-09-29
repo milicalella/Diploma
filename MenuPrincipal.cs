@@ -87,9 +87,11 @@ namespace Servicios
             idiomaToolStripMenuItem.Enabled = ServiceSessionManager577MC.getIntancia().TienePermiso("Cambiar Idioma");
             gestionRespaldoToolStripMenuItem.Enabled = ServiceSessionManager577MC.getIntancia().TienePermiso("Gestion Respaldo");
             clientesToolStripMenuItem.Enabled = ServiceSessionManager577MC.getIntancia().TienePermiso("Gestion Clientes") || ServiceSessionManager577MC.getIntancia().TienePermiso("Seleccionar Propiedad") || ServiceSessionManager577MC.getIntancia().TienePermiso("Agendar Visita") || ServiceSessionManager577MC.getIntancia().TienePermiso("Actualizar Estado Visita");
-            seleccionarPropiedadToolStripMenuItem.Enabled = ServiceSessionManager577MC.getIntancia().TienePermiso("Seleccionar Propiedad");
+
             agendarVisitaToolStripMenuItem.Enabled = ServiceSessionManager577MC.getIntancia().TienePermiso("Agendar Visita");
             actualizarEstadoVisitaToolStripMenuItem.Enabled = ServiceSessionManager577MC.getIntancia().TienePermiso("Actualizar Estado Visita");
+            abmClientesToolStripMenuItem.Enabled = ServiceSessionManager577MC.getIntancia().TienePermiso("Gestion Clientes");
+            abmPropiedadesToolStripMenuItem.Enabled = ServiceSessionManager577MC.getIntancia().TienePermiso("Seleccionar Propiedad");
         }
 
         private void cambiarClaveToolStripMenuItem_Click(object sender, EventArgs e)
@@ -159,10 +161,13 @@ namespace Servicios
             idiomaToolStripMenuItem.Text = t.Translate("MenuPrincipal.menuIdioma");
             gestionRespaldoToolStripMenuItem.Text = t.Translate("MenuPrincipal.menuRespaldo");
             clientesToolStripMenuItem.Text = t.Translate("MenuPrincipal.menuClientes");
-            registrarClienteToolStripMenuItem.Text = t.Translate("MenuPrincipal.menuRegistrarCliente");
-            seleccionarPropiedadToolStripMenuItem.Text = t.Translate("MenuPrincipal.menuSeleccionarPropiedad");
+            //registrarClienteToolStripMenuItem.Text = t.Translate("MenuPrincipal.menuRegistrarCliente");
+            //seleccionarPropiedadToolStripMenuItem.Text = t.Translate("MenuPrincipal.menuSeleccionarPropiedad");
             agendarVisitaToolStripMenuItem.Text = t.Translate("MenuPrincipal.menuAgendarVisita");
             actualizarEstadoVisitaToolStripMenuItem.Text = t.Translate("MenuPrincipal.menuActualizarEstadoVisita");
+            maestrosToolStripMenuItem.Text = t.Translate("MenuPrincipal.menuMaestros");
+            abmClientesToolStripMenuItem.Text = t.Translate("MenuPrincipal.menuAbmClientes");
+            abmPropiedadesToolStripMenuItem.Text = t.Translate("MenuPrincipal.menuAbmPropiedades");
         }
 
         private void gestionFamiliaToolStripMenuItem_Click(object sender, EventArgs e)
@@ -239,6 +244,39 @@ namespace Servicios
 
             ActualizarEstadoVisita form = new ActualizarEstadoVisita();
             form.Show();
+        }
+
+        private void abmClientesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var t = ServiceSessionManager577MC.getIntancia().Idioma;
+
+            if (!ServiceSessionManager577MC.getIntancia().TienePermiso("Gestion Clientes"))
+            {
+                MessageBox.Show(t.Translate("MenuPrincipal.msgAccesoDenegadoClientes"), t.Translate("MenuPrincipal.titleAccesoDenegado"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            RegistrarCliente form = new RegistrarCliente();
+            form.Show();
+        }
+
+        private void abmPropiedadesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var t = ServiceSessionManager577MC.getIntancia().Idioma;
+
+            if (!ServiceSessionManager577MC.getIntancia().TienePermiso("Seleccionar Propiedad"))
+            {
+                MessageBox.Show(t.Translate("MenuPrincipal.msgAccesoDenegadoSeleccionarPropiedad"), t.Translate("MenuPrincipal.titleAccesoDenegado"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            SeleccionarPropiedad form = new SeleccionarPropiedad(true);
+            form.Show();
+        }
+
+        private void clientesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }
