@@ -1,7 +1,7 @@
 ﻿using BLL;
 using Services.Modelos;
 using Services.Modelos.Idioma;
-using Services_55CA;
+using Services_577MC;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,9 +16,9 @@ namespace Servicios
 {
     public partial class GestionFamilia : Form, IIdiomaObserver
     {
-        private BLLFamilia bllFamilia = new BLLFamilia();
-        private BLLPatente bllPermiso = new BLLPatente();
-        private List<FamiliaModelo55CA> listaFamilias;
+        private BLLFamilia577MC bllFamilia = new BLLFamilia577MC();
+        private BLLPatente577MC bllPermiso = new BLLPatente577MC();
+        private List<FamiliaModelo577MC> listaFamilias;
 
         private enum ModoOperacionFamilia
         {
@@ -35,7 +35,7 @@ namespace Servicios
             InitializeComponent();
             cargarDatos();
 
-            ServiceSessionManager55CA.getIntancia().Idioma.Suscribir(this);
+            ServiceSessionManager577MC.getIntancia().Idioma.Suscribir(this);
             actualizarIdioma();
         }
 
@@ -46,7 +46,7 @@ namespace Servicios
             dgvFamilias.DataSource = null;
             dgvFamilias.DataSource = listaFamilias;
 
-            var todosLosComponentes = new List<Componente55CA>();
+            var todosLosComponentes = new List<Componente577MC>();
             todosLosComponentes.AddRange(listaFamilias);
             todosLosComponentes.AddRange(bllPermiso.obtenerTodos());
 
@@ -58,7 +58,7 @@ namespace Servicios
         }
         public void actualizarIdioma()
         {
-            var t = ServiceSessionManager55CA.getIntancia().Idioma;
+            var t = ServiceSessionManager577MC.getIntancia().Idioma;
 
             this.Text = t.Translate("GestionFamilia.formTitle");
             label1.Text = t.Translate("GestionFamilia.labelFamilias");
@@ -78,12 +78,12 @@ namespace Servicios
         {
             if (dgvFamilias.CurrentRow != null)
             {
-                FamiliaModelo55CA familiaSeleccionada = (FamiliaModelo55CA)dgvFamilias.CurrentRow.DataBoundItem;
+                FamiliaModelo577MC familiaSeleccionada = (FamiliaModelo577MC)dgvFamilias.CurrentRow.DataBoundItem;
                 MostrarArbol(familiaSeleccionada);
             }
         }
 
-        private void MostrarArbol(FamiliaModelo55CA familia)
+        private void MostrarArbol(FamiliaModelo577MC familia)
         {
             tvPermisosAsignados.Nodes.Clear(); 
 
@@ -94,14 +94,14 @@ namespace Servicios
             tvPermisosAsignados.ExpandAll();
         }
 
-        private void ConstruirRamas(TreeNode nodoPadre, FamiliaModelo55CA familia)
+        private void ConstruirRamas(TreeNode nodoPadre, FamiliaModelo577MC familia)
         {
-            foreach (Componente55CA hijo in familia.obtenerPermisos())
+            foreach (Componente577MC hijo in familia.obtenerPermisos())
             {
                 TreeNode nodoHijo = new TreeNode(hijo.Nombre);
                 nodoPadre.Nodes.Add(nodoHijo);
 
-                if (hijo is FamiliaModelo55CA subFamilia)
+                if (hijo is FamiliaModelo577MC subFamilia)
                 {
                     nodoHijo.NodeFont = new Font(tvPermisosAsignados.Font, FontStyle.Bold);
                     ConstruirRamas(nodoHijo, subFamilia);
@@ -125,19 +125,21 @@ namespace Servicios
 
         private void btAsignar_Click(object sender, EventArgs e)
         {
+            var t = ServiceSessionManager577MC.getIntancia().Idioma;
+
             if (dgvFamilias.CurrentRow == null)
             {
-                MessageBox.Show("Debe seleccionar una Familia de la lista de Familias.", "Validación", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(t.Translate("GestionFamilia.msgSeleccionarFamilia"), t.Translate("GestionFamilia.msgValidacion"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            FamiliaModelo55CA familiaDestino = (FamiliaModelo55CA)dgvFamilias.CurrentRow.DataBoundItem;
+            FamiliaModelo577MC familiaDestino = (FamiliaModelo577MC)dgvFamilias.CurrentRow.DataBoundItem;
 
-            var todosLosComponentes = new List<Componente55CA>();
+            var todosLosComponentes = new List<Componente577MC>();
             todosLosComponentes.AddRange(bllFamilia.ObtenerTodos());
             todosLosComponentes.AddRange(bllPermiso.obtenerTodos());
 
-            var listaFiltrada = todosLosComponentes.Where(componente => !(componente is FamiliaModelo55CA && componente.Id == familiaDestino.Id)).ToList();
+            var listaFiltrada = todosLosComponentes.Where(componente => !(componente is FamiliaModelo577MC && componente.Id == familiaDestino.Id)).ToList();
 
             checkListPermisosFamilias.DataSource = null;
             checkListPermisosFamilias.DataSource = listaFiltrada;
@@ -163,7 +165,7 @@ namespace Servicios
 
         private void btAplicar_Click(object sender, EventArgs e)
         {
-            var t = ServiceSessionManager55CA.getIntancia().Idioma;
+            var t = ServiceSessionManager577MC.getIntancia().Idioma;
 
             try
             {
@@ -183,11 +185,11 @@ namespace Servicios
                         return;
                     }
 
-                    List<Componente55CA> componentesSeleccionados = new List<Componente55CA>();
+                    List<Componente577MC> componentesSeleccionados = new List<Componente577MC>();
 
                     foreach (var item in checkListPermisosFamilias.CheckedItems)
                     {
-                        componentesSeleccionados.Add((Componente55CA)item);
+                        componentesSeleccionados.Add((Componente577MC)item);
                     }
 
                     bllFamilia.CrearFamilia(nombre, componentesSeleccionados);
@@ -209,15 +211,15 @@ namespace Servicios
                         return;
                     }
 
-                    FamiliaModelo55CA familiaDestino = (FamiliaModelo55CA)dgvFamilias.CurrentRow.DataBoundItem;
+                    FamiliaModelo577MC familiaDestino = (FamiliaModelo577MC)dgvFamilias.CurrentRow.DataBoundItem;
 
-                    foreach (Componente55CA componenteMarcado in checkListPermisosFamilias.CheckedItems)
+                    foreach (Componente577MC componenteMarcado in checkListPermisosFamilias.CheckedItems)
                     {
-                        if (componenteMarcado is PermisoModelo55CA patente)
+                        if (componenteMarcado is PermisoModelo577MC patente)
                         {
                             bllFamilia.AsignarPatente(familiaDestino, patente);
                         }
-                        else if (componenteMarcado is FamiliaModelo55CA familiaHija)
+                        else if (componenteMarcado is FamiliaModelo577MC familiaHija)
                         {
                             bllFamilia.AsignarFamilia(familiaDestino, familiaHija);
                         }
@@ -234,7 +236,7 @@ namespace Servicios
                         return;
                     }
 
-                    FamiliaModelo55CA familiaSeleccionada = (FamiliaModelo55CA)dgvFamilias.CurrentRow.DataBoundItem;
+                    FamiliaModelo577MC familiaSeleccionada = (FamiliaModelo577MC)dgvFamilias.CurrentRow.DataBoundItem;
 
                     try
                     {

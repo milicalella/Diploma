@@ -52,6 +52,10 @@ namespace Services
 
         public string Translate(string key)
         {
+            if (traducciones == null)
+            {
+                return key;
+            }
             return traducciones.TryGetValue(key, out string value) ? value : key; //toma lo que le pasamos y devuelve su traduccion guardado en el JSON
         }
     }

@@ -1,4 +1,4 @@
-﻿using BE;
+using BE;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -15,9 +15,9 @@ namespace Services.Instalador
     {
         private const string NOMBRE_CONEXION = "ConexionPrincipal";
 
-        public static List<InstanciaSqlBE> ObtenerInstanciasDisponibles()
+        public static List<InstanciaSql577MC> ObtenerInstanciasDisponibles()
         {
-            var resultado = new List<InstanciaSqlBE>();
+            var resultado = new List<InstanciaSql577MC>();
             try
             {
                 var tabla = SqlDataSourceEnumerator.Instance.GetDataSources();
@@ -27,7 +27,7 @@ namespace Services.Instalador
                     string nombreInstancia = fila["InstanceName"].ToString();
                     string nombreCompleto = string.IsNullOrEmpty(nombreInstancia)
                         ? servidor : $@"{servidor}\{nombreInstancia}";
-                    resultado.Add(new InstanciaSqlBE { NombreServidor = nombreCompleto });
+                    resultado.Add(new InstanciaSql577MC { NombreServidor = nombreCompleto });
                 }
             }
             catch { }
@@ -40,10 +40,10 @@ namespace Services.Instalador
             return resultado;
         }
 
-        private static void AgregarSiNoExiste(List<InstanciaSqlBE> lista, string nombre)
+        private static void AgregarSiNoExiste(List<InstanciaSql577MC> lista, string nombre)
         {
             if (!lista.Exists(i => i.NombreServidor.Equals(nombre, StringComparison.OrdinalIgnoreCase)))
-                lista.Add(new InstanciaSqlBE { NombreServidor = nombre });
+                lista.Add(new InstanciaSql577MC { NombreServidor = nombre });
         }
 
         public static string ConstruirConnectionString(string servidor, string baseDatos, bool usarWindowsAuth,

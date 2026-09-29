@@ -1,7 +1,7 @@
 ﻿using BE;
 using BLL;
 using Services.Modelos.Idioma;
-using Services_55CA;
+using Services_577MC;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -18,14 +18,14 @@ namespace Servicios
 {
     public partial class Login : Form, IIdiomaObserver
     {
-        UsuarioService _userService = new UsuarioService();
-        BLLIdioma55CA _idiomaService = new BLLIdioma55CA();
+        BLLUsuario577MC _userService = new BLLUsuario577MC();
+        BLLIdioma577MC _idiomaService = new BLLIdioma577MC();
         
 
         public Login()
         {
             InitializeComponent();
-            ServiceSessionManager55CA.getIntancia().Idioma.Suscribir(this);
+            ServiceSessionManager577MC.getIntancia().Idioma.Suscribir(this);
 
         }
 
@@ -45,25 +45,26 @@ namespace Servicios
             {
                 bool usaPasswordDefault = _userService.login(username, password);
 
-                int idiomaUsuario = ServiceSessionManager55CA.getIntancia().usuarioActivo.IdIdioma;
+                int idiomaUsuario = ServiceSessionManager577MC.getIntancia().usuarioActivo.IdIdioma;
                 string codIdiomaUsuario = idiomaUsuario == 1 ? "es" : "en";
-                ServiceSessionManager55CA.getIntancia().Idioma.CargarIdioma(codIdiomaUsuario);
+                ServiceSessionManager577MC.getIntancia().Idioma.CargarIdioma(codIdiomaUsuario);
 
-                bool usuarioOk = DigitoVerificador55CA.VerificarUsuario();
-                bool rolOk = DigitoVerificador55CA.VerificarRol();
-                bool familiaOk = DigitoVerificador55CA.VerificarFamilia();
-                bool patenteOk = DigitoVerificador55CA.VerificarPatente();
+                var integridad = DigitoVerificador577MC.VerificarIntegridad();
+                bool usuarioOk = integridad.Usuario;
+                bool rolOk = integridad.Rol;
+                bool familiaOk = integridad.Familia;
+                bool patenteOk = integridad.Patente;
 
 
                 
                 if (!usuarioOk || !rolOk || !familiaOk || !patenteOk)
                 {
-                    if (ServiceSessionManager55CA.getIntancia().usuarioActivo.Rol.Id != 1)
+                    if (ServiceSessionManager577MC.getIntancia().usuarioActivo.Rol.Id != 1)
                     {
-                        MessageBox.Show("Se encontraron inconsistencias en la base de datos, contactese con un administrador");
+                        MessageBox.Show(ServiceSessionManager577MC.getIntancia().Idioma.Translate("Login.msgInconsistencias"));
                         txtUser.Text = "";
                         txtPassword.Text = "";
-                        ServiceSessionManager55CA.getIntancia().Logout();
+                        ServiceSessionManager577MC.getIntancia().Logout();
                         return;
 
                     }
@@ -108,7 +109,13 @@ namespace Servicios
 
         public void actualizarIdioma()
         {
+            var t = ServiceSessionManager577MC.getIntancia().Idioma;
 
+            this.Text = t.Translate("Login.formTitle");
+            label3.Text = t.Translate("Login.labelBienvenido");
+            lblUsuario.Text = t.Translate("Login.lblUsuario");
+            lblContrasena.Text = t.Translate("Login.lblPassword");
+            btnLogin.Text = t.Translate("Login.btnLogin");
         }
 
         

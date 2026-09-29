@@ -18,26 +18,29 @@ namespace Servicios
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-
-            string csActual = ServicioConfiguracionConexion.ObtenerConnectionStringGuardada();
-            bool necesitaConfiguracion = string.IsNullOrWhiteSpace(csActual);
-
-            if (!necesitaConfiguracion)
-            {
-                var (exito, _) = ServicioConfiguracionConexion.ProbarConexion(csActual);
-                necesitaConfiguracion = !exito;
-            }
-
-            if (necesitaConfiguracion)
-            {
-                using (var formConfig = new Configuracion_Inicial())
-                {
-                    if (formConfig.ShowDialog() != DialogResult.OK)
-                        return;
-                }
-            }
-
             Application.Run(new Login());
+            //Application.EnableVisualStyles();
+            //Application.SetCompatibleTextRenderingDefault(false);
+
+            //string csActual = ServicioConfiguracionConexion.ObtenerConnectionStringGuardada();
+            //bool necesitaConfiguracion = string.IsNullOrWhiteSpace(csActual);
+
+            //if (!necesitaConfiguracion)
+            //{
+            //    var (exito, _) = ServicioConfiguracionConexion.ProbarConexion(csActual);
+            //    necesitaConfiguracion = !exito;
+            //}
+
+            //if (necesitaConfiguracion)
+            //{
+            //    using (var formConfig = new Configuracion_Inicial())
+            //    {
+            //        if (formConfig.ShowDialog() != DialogResult.OK)
+            //            return;
+            //    }
+            //}
+
+            //Application.Run(new Login());
         }
     }
 }

@@ -44,6 +44,11 @@
             this.ayudaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
             this.gestionRespaldoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.clientesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.registrarClienteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.seleccionarPropiedadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.agendarVisitaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.actualizarEstadoVisitaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -56,6 +61,7 @@
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.usuarioToolStripMenuItem,
             this.administradorToolStripMenuItem,
+            this.clientesToolStripMenuItem,
             this.ayudaToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
@@ -184,6 +190,45 @@
             this.gestionRespaldoToolStripMenuItem.Text = "Gestion Respaldo";
             this.gestionRespaldoToolStripMenuItem.Click += new System.EventHandler(this.gestionRespaldoToolStripMenuItem_Click);
             // 
+            // clientesToolStripMenuItem
+            // 
+            this.clientesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.registrarClienteToolStripMenuItem,
+            this.seleccionarPropiedadToolStripMenuItem,
+            this.agendarVisitaToolStripMenuItem,
+            this.actualizarEstadoVisitaToolStripMenuItem});
+            this.clientesToolStripMenuItem.Name = "clientesToolStripMenuItem";
+            this.clientesToolStripMenuItem.Size = new System.Drawing.Size(139, 41);
+            this.clientesToolStripMenuItem.Text = "Clientes";
+            // 
+            // registrarClienteToolStripMenuItem
+            // 
+            this.registrarClienteToolStripMenuItem.Name = "registrarClienteToolStripMenuItem";
+            this.registrarClienteToolStripMenuItem.Size = new System.Drawing.Size(210, 46);
+            this.registrarClienteToolStripMenuItem.Text = "Registrar Cliente";
+            this.registrarClienteToolStripMenuItem.Click += new System.EventHandler(this.registrarClienteToolStripMenuItem_Click);
+            // 
+            // seleccionarPropiedadToolStripMenuItem
+            // 
+            this.seleccionarPropiedadToolStripMenuItem.Name = "seleccionarPropiedadToolStripMenuItem";
+            this.seleccionarPropiedadToolStripMenuItem.Size = new System.Drawing.Size(210, 46);
+            this.seleccionarPropiedadToolStripMenuItem.Text = "Seleccionar Propiedad";
+            this.seleccionarPropiedadToolStripMenuItem.Click += new System.EventHandler(this.seleccionarPropiedadToolStripMenuItem_Click);
+            // 
+            // agendarVisitaToolStripMenuItem
+            // 
+            this.agendarVisitaToolStripMenuItem.Name = "agendarVisitaToolStripMenuItem";
+            this.agendarVisitaToolStripMenuItem.Size = new System.Drawing.Size(210, 46);
+            this.agendarVisitaToolStripMenuItem.Text = "Agendar Visita";
+            this.agendarVisitaToolStripMenuItem.Click += new System.EventHandler(this.agendarVisitaToolStripMenuItem_Click);
+            // 
+            // actualizarEstadoVisitaToolStripMenuItem
+            // 
+            this.actualizarEstadoVisitaToolStripMenuItem.Name = "actualizarEstadoVisitaToolStripMenuItem";
+            this.actualizarEstadoVisitaToolStripMenuItem.Size = new System.Drawing.Size(210, 46);
+            this.actualizarEstadoVisitaToolStripMenuItem.Text = "Actualizar Estado Visita";
+            this.actualizarEstadoVisitaToolStripMenuItem.Click += new System.EventHandler(this.actualizarEstadoVisitaToolStripMenuItem_Click);
+            // 
             // MenuPrincipal
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 25F);
@@ -222,5 +267,10 @@
         private System.Windows.Forms.ToolStripMenuItem españolToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem englishToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem gestionRespaldoToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem clientesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem registrarClienteToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem seleccionarPropiedadToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem agendarVisitaToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem actualizarEstadoVisitaToolStripMenuItem;
     }
 }

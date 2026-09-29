@@ -2,7 +2,7 @@
 using BLL;
 using Services;
 using Services.Modelos.Idioma;
-using Services_55CA;
+using Services_577MC;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -19,7 +19,7 @@ namespace Servicios
 {
     public partial class AuditoriaBitacora : Form, IIdiomaObserver
     {
-        BitacoraEventosService bitService = new BitacoraEventosService();
+        BLLBitacora577MC bitService = new BLLBitacora577MC();
         PrintDocument printDoc = new PrintDocument();
         public AuditoriaBitacora()
         {
@@ -29,7 +29,7 @@ namespace Servicios
             this.Load += new System.EventHandler(this.AuditoriaBitacora_Load_1);
 
             this.dgvBitacora.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.dgvBitacora_CellFormatting);
-            ServiceSessionManager55CA.getIntancia().Idioma.Suscribir(this);
+            ServiceSessionManager577MC.getIntancia().Idioma.Suscribir(this);
             actualizarIdioma();
         }
 
@@ -52,9 +52,9 @@ namespace Servicios
         private void CargarComboModulo()
         {
             var listaModulos = new List<object>();
-            listaModulos.Add(new { Id = 0, Nombre = "Todos" });
+            listaModulos.Add(new { Id = 0, Nombre = ServiceSessionManager577MC.getIntancia().Idioma.Translate("AuditoriaBitacora.todos") });
 
-            foreach (Modulos55CA mod in Enum.GetValues(typeof(Modulos55CA)))
+            foreach (Modulos577MC mod in Enum.GetValues(typeof(Modulos577MC)))
             {
                 listaModulos.Add(new { Id = (int)mod, Nombre = mod.ToString() });
             }
@@ -67,7 +67,7 @@ namespace Servicios
 
         private void btnFiltrar_Click(object sender, EventArgs e)
         {
-            var t = ServiceSessionManager55CA.getIntancia().Idioma;
+            var t = ServiceSessionManager577MC.getIntancia().Idioma;
             DateTime desde = dtpDesde.Value.Date;
             DateTime hasta = dtpHasta.Value.Date.AddDays(1).AddSeconds(-1);
 
@@ -106,7 +106,7 @@ namespace Servicios
             Font fontHeader = new Font("Arial", 8, FontStyle.Bold);
 
             
-            e.Graphics.DrawString("Bitácora de Eventos", new Font("Arial", 14, FontStyle.Bold), Brushes.Black, x, y);
+            e.Graphics.DrawString(ServiceSessionManager577MC.getIntancia().Idioma.Translate("AuditoriaBitacora.printTitle"), new Font("Arial", 14, FontStyle.Bold), Brushes.Black, x, y);
             y += 40;
 
            
@@ -229,7 +229,7 @@ namespace Servicios
             {
                 if (Int32.TryParse(e.Value.ToString(), out int criticidad))
                 {
-                    e.Value = ((Criticidad55CA)criticidad).ToString();
+                    e.Value = ((Criticidad577MC)criticidad).ToString();
                     e.FormattingApplied = true;
                 }
             }
@@ -239,7 +239,7 @@ namespace Servicios
             {
                 if (Int32.TryParse(e.Value.ToString(), out int modulo))
                 {
-                    e.Value = ((Modulos55CA)modulo).ToString();
+                    e.Value = ((Modulos577MC)modulo).ToString();
                     e.FormattingApplied = true;
                 }
             }
@@ -247,7 +247,7 @@ namespace Servicios
 
         public void actualizarIdioma()
         {
-            var t = ServiceSessionManager55CA.getIntancia().Idioma;
+            var t = ServiceSessionManager577MC.getIntancia().Idioma;
 
             this.Text = t.Translate("AuditoriaBitacora.formTitle");
             label2.Text = t.Translate("AuditoriaBitacora.labelDesde");
