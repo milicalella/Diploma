@@ -116,7 +116,7 @@ namespace Servicios
                     return;
                 }
 
-                _visitaBLL.ActualizarEstadoVisita(visita.IdVisita, cboNuevoEstado.SelectedValue as string, txtObservaciones.Text);
+                _visitaBLL.ActualizarEstadoVisita(visita.IdVisita, ValorSeleccionado(cboNuevoEstado), txtObservaciones.Text);
 
                 MessageBox.Show(t.Translate("ActualizarEstadoVisita.msgEstadoActualizado"), t.Translate("ActualizarEstadoVisita.title"), MessageBoxButtons.OK, MessageBoxIcon.Information);
 
@@ -130,7 +130,19 @@ namespace Servicios
 
         private Visita577MC VisitaSeleccionada()
         {
-            return dgvVisitas.CurrentRow?.DataBoundItem as Visita577MC;
+            Visita577MC visita = null;
+
+            if (dgvVisitas.SelectedRows.Count > 0)
+            {
+                visita = dgvVisitas.SelectedRows[0].DataBoundItem as Visita577MC;
+            }
+
+            if (visita == null && dgvVisitas.CurrentRow != null)
+            {
+                visita = dgvVisitas.CurrentRow.DataBoundItem as Visita577MC;
+            }
+
+            return visita;
         }
 
         private void CargarConFiltro()
@@ -138,7 +150,7 @@ namespace Servicios
             _cargando = true;
             try
             {
-                string estadoFiltro = cboFiltroEstado.SelectedValue as string;
+                string estadoFiltro = ValorSeleccionado(cboFiltroEstado);
 
                 List<Visita577MC> visitas = _visitaBLL.ObtenerVisitas(string.IsNullOrEmpty(estadoFiltro) ? null : estadoFiltro);
 
@@ -163,39 +175,57 @@ namespace Servicios
         {
             var t = ServiceSessionManager577MC.getIntancia().Idioma;
 
-            string filtroActual = cboFiltroEstado.SelectedValue as string;
-            cboFiltroEstado.Items.Clear();
-            cboFiltroEstado.Items.Add(new ItemCombo { Display = t.Translate("Comun.todos"), Valor = "" });
+            string filtroActual = ValorSeleccionado(cboFiltroEstado);
+            var itemsFiltro = new List<ItemCombo>
+            {
+                new ItemCombo { Display = t.Translate("Comun.todos"), Valor = "" }
+            };
             foreach (var valor in new[] { "Pendiente", "Realizada", "Cancelada" })
             {
-                cboFiltroEstado.Items.Add(new ItemCombo { Display = t.Translate("VisitaEstado." + valor), Valor = valor });
+                itemsFiltro.Add(new ItemCombo { Display = t.Translate("VisitaEstado." + valor), Valor = valor });
             }
+            cboFiltroEstado.DataSource = new BindingList<ItemCombo>(itemsFiltro);
             cboFiltroEstado.DisplayMember = "Display";
             cboFiltroEstado.ValueMember = "Valor";
             SeleccionarItemPorValor(cboFiltroEstado, filtroActual);
 
-            string nuevoActual = cboNuevoEstado.SelectedValue as string;
-            cboNuevoEstado.Items.Clear();
+            string nuevoActual = ValorSeleccionado(cboNuevoEstado);
+            var itemsNuevo = new List<ItemCombo>();
             foreach (var valor in new[] { "Realizada", "Cancelada" })
             {
-                cboNuevoEstado.Items.Add(new ItemCombo { Display = t.Translate("VisitaEstado." + valor), Valor = valor });
+                itemsNuevo.Add(new ItemCombo { Display = t.Translate("VisitaEstado." + valor), Valor = valor });
             }
+            cboNuevoEstado.DataSource = new BindingList<ItemCombo>(itemsNuevo);
             cboNuevoEstado.DisplayMember = "Display";
             cboNuevoEstado.ValueMember = "Valor";
             SeleccionarItemPorValor(cboNuevoEstado, nuevoActual);
         }
 
+        private static string ValorSeleccionado(ComboBox combo)
+        {
+            string valor = combo.SelectedValue as string;
+
+            if (string.IsNullOrEmpty(valor) && combo.SelectedItem is ItemCombo item)
+            {
+                valor = item.Valor;
+            }
+
+            return valor;
+        }
+
         private static void SeleccionarItemPorValor(ComboBox combo, string valor)
         {
-            if (string.IsNullOrEmpty(valor))
+            if (string.IsNullOrWhiteSpace(valor))
             {
                 combo.SelectedIndex = -1;
                 return;
             }
 
+            valor = valor.Trim();
+
             foreach (ItemCombo item in combo.Items)
             {
-                if (item.Valor == valor)
+                if (string.Equals(item.Valor, valor, StringComparison.OrdinalIgnoreCase))
                 {
                     combo.SelectedItem = item;
                     return;

@@ -75,8 +75,7 @@ namespace BLL
 
             int idVisita = dal.InsertarVisita(visita.IdPropiedad, visita.DNICliente.Trim(), visita.Fecha, visita.HoraInicio, visita.HoraFin, visita.Estado, visita.Observaciones, dvh);
 
-            string dniAutor = Services_577MC.ServiceSessionManager577MC.getIntancia().usuarioActivo?.DNI ?? "SISTEMA";
-            bit.registrarEvento(dniAutor, $"Se registró una visita {(visita.Estado)} del cliente {visita.DNICliente} para la propiedad {visita.IdPropiedad} el {visita.Fecha:dd/MM/yyyy} ({visita.RangoHorario}).", Criticidad577MC.Medio, Modulos577MC.Visita);
+            RegistrarBitacora($"Se registró una visita {visita.Estado} del cliente {visita.DNICliente} para la propiedad {visita.IdPropiedad} el {visita.Fecha:dd/MM/yyyy} ({visita.RangoHorario}).");
 
             return idVisita;
         }
@@ -109,8 +108,18 @@ namespace BLL
                 throw new Exception(Tr("VisitaException.msgNoActualizada"));
             }
 
-            string dniAutor = Services_577MC.ServiceSessionManager577MC.getIntancia().usuarioActivo?.DNI ?? "SISTEMA";
-            bit.registrarEvento(dniAutor, $"Se actualizó el estado de la visita {idVisita} a '{visita.Estado}' para el cliente {visita.DNICliente}.", Criticidad577MC.Medio, Modulos577MC.Visita);
+            RegistrarBitacora($"Se actualizó el estado de la visita {idVisita} a '{visita.Estado}' para el cliente {visita.DNICliente}.");
+        }
+
+        private void RegistrarBitacora(string evento)
+        {
+            var usuario = Services_577MC.ServiceSessionManager577MC.getIntancia().usuarioActivo;
+            if (usuario == null || string.IsNullOrEmpty(usuario.DNI))
+            {
+                return;
+            }
+
+            bit.registrarEvento(usuario.DNI, evento, Criticidad577MC.Medio, Modulos577MC.Visita);
         }
 
         private void ValidarConsulta(int idPropiedad, DateTime fecha, TimeSpan horaInicio, TimeSpan horaFin)

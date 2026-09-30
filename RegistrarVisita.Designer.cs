@@ -42,6 +42,8 @@ namespace Servicios
             this.lblFecha = new System.Windows.Forms.Label();
             this.btnConfirmar = new System.Windows.Forms.Button();
             this.btnLimpiar = new System.Windows.Forms.Button();
+            this.btnReporte = new System.Windows.Forms.Button();
+            this.btnConsultarDisponibilidad = new System.Windows.Forms.Button();
             this.lblResultadoRegistro = new System.Windows.Forms.Label();
             this.gbCliente.SuspendLayout();
             this.gbPropiedad.SuspendLayout();
@@ -148,6 +150,7 @@ namespace Servicios
             // 
             // gbHorario
             // 
+            this.gbHorario.Controls.Add(this.btnConsultarDisponibilidad);
             this.gbHorario.Controls.Add(this.lblDisponibilidad);
             this.gbHorario.Controls.Add(this.dtpHoraFin);
             this.gbHorario.Controls.Add(this.lblFin);
@@ -168,9 +171,22 @@ namespace Servicios
             this.lblDisponibilidad.Font = new System.Drawing.Font("Verdana", 10F, System.Drawing.FontStyle.Bold);
             this.lblDisponibilidad.Location = new System.Drawing.Point(20, 72);
             this.lblDisponibilidad.Name = "lblDisponibilidad";
-            this.lblDisponibilidad.Size = new System.Drawing.Size(760, 34);
+            this.lblDisponibilidad.Size = new System.Drawing.Size(580, 34);
             this.lblDisponibilidad.TabIndex = 6;
             this.lblDisponibilidad.Text = "-";
+            // 
+            // btnConsultarDisponibilidad
+            // 
+            this.btnConsultarDisponibilidad.BackColor = System.Drawing.Color.SteelBlue;
+            this.btnConsultarDisponibilidad.Font = new System.Drawing.Font("Verdana", 9F, System.Drawing.FontStyle.Bold);
+            this.btnConsultarDisponibilidad.ForeColor = System.Drawing.SystemColors.HighlightText;
+            this.btnConsultarDisponibilidad.Location = new System.Drawing.Point(640, 66);
+            this.btnConsultarDisponibilidad.Name = "btnConsultarDisponibilidad";
+            this.btnConsultarDisponibilidad.Size = new System.Drawing.Size(140, 36);
+            this.btnConsultarDisponibilidad.TabIndex = 8;
+            this.btnConsultarDisponibilidad.Text = "Consultar Disponibilidad";
+            this.btnConsultarDisponibilidad.UseVisualStyleBackColor = false;
+            this.btnConsultarDisponibilidad.Click += new System.EventHandler(this.btnConsultarDisponibilidad_Click);
             // 
             // dtpHoraFin
             // 
@@ -251,6 +267,19 @@ namespace Servicios
             this.btnLimpiar.UseVisualStyleBackColor = false;
             this.btnLimpiar.Click += new System.EventHandler(this.btnLimpiar_Click);
             // 
+            // btnReporte
+            // 
+            this.btnReporte.BackColor = System.Drawing.Color.SteelBlue;
+            this.btnReporte.Font = new System.Drawing.Font("Verdana", 9F, System.Drawing.FontStyle.Bold);
+            this.btnReporte.ForeColor = System.Drawing.SystemColors.HighlightText;
+            this.btnReporte.Location = new System.Drawing.Point(386, 432);
+            this.btnReporte.Name = "btnReporte";
+            this.btnReporte.Size = new System.Drawing.Size(160, 42);
+            this.btnReporte.TabIndex = 7;
+            this.btnReporte.Text = "Reporte pacto";
+            this.btnReporte.UseVisualStyleBackColor = false;
+            this.btnReporte.Click += new System.EventHandler(this.btnReporte_Click);
+            // 
             // lblResultadoRegistro
             // 
             this.lblResultadoRegistro.Font = new System.Drawing.Font("Verdana", 10F, System.Drawing.FontStyle.Bold);
@@ -268,6 +297,7 @@ namespace Servicios
             this.ClientSize = new System.Drawing.Size(860, 545);
             this.Controls.Add(this.lblResultadoRegistro);
             this.Controls.Add(this.btnLimpiar);
+            this.Controls.Add(this.btnReporte);
             this.Controls.Add(this.btnConfirmar);
             this.Controls.Add(this.gbHorario);
             this.Controls.Add(this.gbPropiedad);
@@ -305,8 +335,10 @@ namespace Servicios
         private System.Windows.Forms.Label lblInicio;
         private System.Windows.Forms.DateTimePicker dtpFecha;
         private System.Windows.Forms.Label lblFecha;
-        private System.Windows.Forms.Button btnConfirmar;
+private System.Windows.Forms.Button btnConfirmar;
         private System.Windows.Forms.Button btnLimpiar;
+private System.Windows.Forms.Button btnReporte;
+        private System.Windows.Forms.Button btnConsultarDisponibilidad;
         private System.Windows.Forms.Label lblResultadoRegistro;
     }
 }

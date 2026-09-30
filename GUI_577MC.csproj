@@ -135,6 +135,12 @@
     <Compile Include="RepararInconsistencias.Designer.cs">
       <DependentUpon>RepararInconsistencias.cs</DependentUpon>
     </Compile>
+    <Compile Include="FrmConsultarDisponibilidad.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FrmConsultarDisponibilidad.Designer.cs">
+      <DependentUpon>FrmConsultarDisponibilidad.cs</DependentUpon>
+    </Compile>
     <None Include="Scripts\scriptTerceraEntrega.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>

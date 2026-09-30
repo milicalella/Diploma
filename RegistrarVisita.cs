@@ -18,6 +18,8 @@ namespace Servicios
         Propiedad577MC _propiedad;
         bool? _disponibilidad;
         int? _ultimoIdVisita;
+        Visita577MC _ultimaVisita;
+        string _direccionUltimaVisita;
 
         public RegistrarVisita()
         {
@@ -215,7 +217,8 @@ namespace Servicios
 
                 MessageBox.Show(t.Translate("RegistrarVisita.msgVisitaRegistrada"), t.Translate("RegistrarVisita.title"), MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                MostrarComprobanteRN1(visita);
+                _ultimaVisita = visita;
+                _direccionUltimaVisita = _propiedad == null ? null : _propiedad.Direccion;
 
                 Limpiar();
             }
@@ -227,7 +230,7 @@ namespace Servicios
 
         #endregion
 
-        private void MostrarComprobanteRN1(Visita577MC visita)
+        private void MostrarComprobanteRN1(Visita577MC visita, string direccionPropiedad)
         {
             Cliente577MC cliente = _cliente != null && !string.IsNullOrEmpty(_cliente.Nombre)
                 ? _cliente
@@ -238,7 +241,47 @@ namespace Servicios
                 cliente = new Cliente577MC { DNI = visita.DNICliente };
             }
 
-            ReporteRN1577MC.Emitir(visita, cliente, _propiedad == null ? null : _propiedad.Direccion);
+            ReporteRN1577MC.Emitir(visita, cliente, direccionPropiedad);
+        }
+
+        private void btnReporte_Click(object sender, EventArgs e)
+        {
+            var t = ServiceSessionManager577MC.getIntancia().Idioma;
+
+            if (_ultimaVisita == null)
+            {
+                MessageBox.Show(t.Translate("RegistrarVisita.msgDebeConfirmarReporte"), t.Translate("RegistrarVisita.title"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            MostrarComprobanteRN1(_ultimaVisita, _direccionUltimaVisita);
+        }
+
+        private void btnConsultarDisponibilidad_Click(object sender, EventArgs e)
+        {
+            var t = ServiceSessionManager577MC.getIntancia().Idioma;
+
+            if (_propiedad == null)
+            {
+                MessageBox.Show(t.Translate("RegistrarVisita.msgSeleccionarPropiedad"), t.Translate("RegistrarVisita.title"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            using (FrmConsultarDisponibilidad form = new FrmConsultarDisponibilidad(_propiedad))
+            {
+                if (form.ShowDialog() != DialogResult.OK)
+                {
+                    return;
+                }
+
+                dtpFecha.Value = form.FechaSeleccionada;
+                dtpHoraInicio.Value = form.FechaSeleccionada.Add(form.HoraInicioSeleccionada);
+                dtpHoraFin.Value = form.FechaSeleccionada.Add(form.HoraFinSeleccionada);
+
+                _disponibilidad = form.DisponibilidadConfirmada;
+                _ultimoIdVisita = null;
+                RefrescarLabelsInfo();
+            }
         }
 
         private void btnLimpiar_Click(object sender, EventArgs e)
@@ -346,6 +389,8 @@ namespace Servicios
             lblFin.Text = t.Translate("RegistrarVisita.labelFin");
             btnConfirmar.Text = t.Translate("RegistrarVisita.btnConfirmar");
             btnLimpiar.Text = t.Translate("RegistrarVisita.btnLimpiar");
+            btnReporte.Text = t.Translate("RegistrarVisita.btnReporte");
+            btnConsultarDisponibilidad.Text = t.Translate("RegistrarVisita.btnConsultarDisponibilidad");
 
             RefrescarLabelsInfo();
         }
