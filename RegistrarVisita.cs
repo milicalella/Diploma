@@ -215,6 +215,8 @@ namespace Servicios
 
                 MessageBox.Show(t.Translate("RegistrarVisita.msgVisitaRegistrada"), t.Translate("RegistrarVisita.title"), MessageBoxButtons.OK, MessageBoxIcon.Information);
 
+                MostrarComprobanteRN1(visita);
+
                 Limpiar();
             }
             catch (Exception ex)
@@ -224,6 +226,20 @@ namespace Servicios
         }
 
         #endregion
+
+        private void MostrarComprobanteRN1(Visita577MC visita)
+        {
+            Cliente577MC cliente = _cliente != null && !string.IsNullOrEmpty(_cliente.Nombre)
+                ? _cliente
+                : _clienteBLL.ObtenerPorDNI(visita.DNICliente);
+
+            if (cliente == null)
+            {
+                cliente = new Cliente577MC { DNI = visita.DNICliente };
+            }
+
+            ReporteRN1577MC.Emitir(visita, cliente, _propiedad == null ? null : _propiedad.Direccion);
+        }
 
         private void btnLimpiar_Click(object sender, EventArgs e)
         {

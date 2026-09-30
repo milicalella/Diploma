@@ -47,8 +47,7 @@ namespace BLL
             long dvh = CalcularDVHPropiedad(id, propiedad);
             dal.ActualizarDVH(id, dvh);
 
-            string dniAutor = Services_577MC.ServiceSessionManager577MC.getIntancia().usuarioActivo?.DNI ?? "SISTEMA";
-            bit.registrarEvento(dniAutor, $"Se registró la propiedad {id} - {propiedad.Direccion}.", Criticidad577MC.Medio, Modulos577MC.Propiedades);
+            RegistrarBitacora($"Se registró la propiedad {id} - {propiedad.Direccion}.");
 
             return id;
         }
@@ -67,8 +66,7 @@ namespace BLL
                 throw new Exception(Tr("PropiedadException.msgNoExiste"));
             }
 
-            string dniAutor = Services_577MC.ServiceSessionManager577MC.getIntancia().usuarioActivo?.DNI ?? "SISTEMA";
-            bit.registrarEvento(dniAutor, $"Se modificó la propiedad {propiedad.Id} - {propiedad.Direccion}.", Criticidad577MC.Medio, Modulos577MC.Propiedades);
+            RegistrarBitacora($"Se modificó la propiedad {propiedad.Id} - {propiedad.Direccion}.");
         }
 
         public void EliminarPropiedad(int idPropiedad)
@@ -85,8 +83,18 @@ namespace BLL
                 throw new Exception(Tr("PropiedadException.msgNoExiste"));
             }
 
-            string dniAutor = Services_577MC.ServiceSessionManager577MC.getIntancia().usuarioActivo?.DNI ?? "SISTEMA";
-            bit.registrarEvento(dniAutor, $"Se eliminó la propiedad {idPropiedad}.", Criticidad577MC.Medio, Modulos577MC.Propiedades);
+            RegistrarBitacora($"Se eliminó la propiedad {idPropiedad}.");
+        }
+
+        private void RegistrarBitacora(string evento)
+        {
+            var usuario = Services_577MC.ServiceSessionManager577MC.getIntancia().usuarioActivo;
+            if (usuario == null || string.IsNullOrEmpty(usuario.DNI))
+            {
+                return;
+            }
+
+            bit.registrarEvento(usuario.DNI, evento, Criticidad577MC.Medio, Modulos577MC.Propiedades);
         }
 
         public List<Propiedad577MC> Buscar(string direccion, string tipo, string estado, decimal? precioMin, decimal? precioMax)
@@ -95,9 +103,6 @@ namespace BLL
 
             DataTable dt = dal.Buscar(direccion, tipo, estado, precioMin, precioMax);
             List<Propiedad577MC> propiedades = Mapear(dt);
-
-            string dniAutor = Services_577MC.ServiceSessionManager577MC.getIntancia().usuarioActivo?.DNI ?? "SISTEMA";
-            bit.registrarEvento(dniAutor, $"Consultó el catálogo de propiedades y obtuvo {propiedades.Count} resultado(s).", Criticidad577MC.Medio, Modulos577MC.Propiedades);
 
             return propiedades;
         }
@@ -170,11 +175,6 @@ namespace BLL
             if (precioMin.HasValue && precioMax.HasValue && precioMin.Value > precioMax.Value)
             {
                 throw new Exception(Tr("PropiedadException.msgPrecioRango"));
-            }
-
-            if (!string.IsNullOrWhiteSpace(direccion) && direccion.Trim().Length < 3)
-            {
-                throw new Exception(Tr("PropiedadException.msgDireccionCorta"));
             }
 
             if (!string.IsNullOrWhiteSpace(tipo) && !SistemaValido(TiposValidos, tipo))

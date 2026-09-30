@@ -34,6 +34,20 @@ namespace DAL
             return acceso.executeDataTable(query);
         }
 
+        public DataTable ObtenerPorDNI(string dni)
+        {
+            string query = @"SELECT DNI, Nombre, Apellido, Telefono, Email, DVH
+                             FROM Cliente
+                             WHERE DNI = @dni";
+
+            var parametros = new Dictionary<string, object>
+            {
+                { "@dni", dni.Trim() }
+            };
+
+            return acceso.executeDataTable(query, parametros);
+        }
+
         public bool TieneVisitas(string dni)
         {
             string query = "SELECT 1 FROM Visita WHERE DNICliente = @dni";

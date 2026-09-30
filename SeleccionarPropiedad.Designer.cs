@@ -80,6 +80,7 @@ private void InitializeComponent()
             this.dgvPropiedades.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.dgvPropiedades.AutoGenerateColumns = false;
             this.dgvPropiedades.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dgvPropiedades.Location = new System.Drawing.Point(24, 128);
             this.dgvPropiedades.MultiSelect = false;
@@ -89,7 +90,60 @@ private void InitializeComponent()
             this.dgvPropiedades.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvPropiedades.Size = new System.Drawing.Size(900, 200);
             this.dgvPropiedades.TabIndex = 10;
+            this.dgvPropiedades.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+            this.colId,
+            this.colDireccion,
+            this.colTipo,
+            this.colEstado,
+            this.colPrecio});
             this.dgvPropiedades.DoubleClick += new System.EventHandler(this.dgvPropiedades_DoubleClick);
+            // 
+            // colId
+            // 
+            this.colId.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.colId.DataPropertyName = "Id";
+            this.colId.HeaderText = "Código";
+            this.colId.Name = "colId";
+            this.colId.ReadOnly = true;
+            this.colId.Width = 70;
+            // 
+            // colDireccion
+            // 
+            this.colDireccion.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.colDireccion.DataPropertyName = "Direccion";
+            this.colDireccion.HeaderText = "Dirección";
+            this.colDireccion.Name = "colDireccion";
+            this.colDireccion.ReadOnly = true;
+            this.colDireccion.Width = 300;
+            // 
+            // colTipo
+            // 
+            this.colTipo.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.colTipo.DataPropertyName = "Tipo";
+            this.colTipo.HeaderText = "Tipo";
+            this.colTipo.Name = "colTipo";
+            this.colTipo.ReadOnly = true;
+            this.colTipo.Width = 120;
+            // 
+            // colEstado
+            // 
+            this.colEstado.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.colEstado.DataPropertyName = "Estado";
+            this.colEstado.HeaderText = "Estado";
+            this.colEstado.Name = "colEstado";
+            this.colEstado.ReadOnly = true;
+            this.colEstado.Width = 100;
+            // 
+            // colPrecio
+            // 
+            this.colPrecio.AutoSizeMode = System.Windows.Forms.DataGridViewAutoSizeColumnMode.None;
+            this.colPrecio.DataPropertyName = "Precio";
+            this.colPrecio.DefaultCellStyle.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleRight;
+            this.colPrecio.DefaultCellStyle.Format = "N2";
+            this.colPrecio.HeaderText = "Precio";
+            this.colPrecio.Name = "colPrecio";
+            this.colPrecio.ReadOnly = true;
+            this.colPrecio.Width = 120;
             // 
             // lblDireccion
             // 

@@ -128,6 +128,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ReporteRN1577MC.cs" />
     <Compile Include="RepararInconsistencias.cs">
       <SubType>Form</SubType>
     </Compile>

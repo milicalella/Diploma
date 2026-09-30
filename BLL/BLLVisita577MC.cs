@@ -56,9 +56,6 @@ namespace BLL
             List<Visita577MC> visitas = ObtenerVisitasPorPropiedadYFecha(idPropiedad, fecha);
             bool disponible = !HaySuperposicion(visitas, horaInicio, horaFin);
 
-            string dniAutor = Services_577MC.ServiceSessionManager577MC.getIntancia().usuarioActivo?.DNI ?? "SISTEMA";
-            bit.registrarEvento(dniAutor, $"Consultó la disponibilidad de la propiedad {idPropiedad} para el {fecha:dd/MM/yyyy} en el horario {horaInicio:hh\\:mm}-{horaFin:hh\\:mm}: {(disponible ? "disponible" : "ocupada")}.", Criticidad577MC.Medio, Modulos577MC.Visita);
-
             return disponible;
         }
 
@@ -177,7 +174,7 @@ namespace BLL
         private long CalcularDVH(Visita577MC visita)
         {
             string cadena = visita.IdPropiedad.ToString() +
-                            visita.DNICliente +
+                            visita.DNICliente.Trim() +
                             visita.Fecha.ToString("yyyyMMdd") +
                             visita.HoraInicio.Hours.ToString("00") +
                             visita.HoraInicio.Minutes.ToString("00") +

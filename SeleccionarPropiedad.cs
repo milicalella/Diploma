@@ -43,6 +43,7 @@ namespace Servicios
             InitializeComponent();
 
             ServiceSessionManager577MC.getIntancia().Idioma.Suscribir(this);
+            FormClosed += (s, e) => ServiceSessionManager577MC.getIntancia().Idioma.Desuscribir(this);
             actualizarIdioma();
 
             if (_modoAbm)
@@ -68,7 +69,15 @@ namespace Servicios
 
         private void SeleccionarPropiedad_Load(object sender, EventArgs e)
         {
-            CargarCatalogo(_propiedadBLL.ObtenerTodas());
+            try
+            {
+                CargarCatalogo(_propiedadBLL.ObtenerTodas());
+            }
+            catch (Exception ex)
+            {
+                var t = ServiceSessionManager577MC.getIntancia().Idioma;
+                MessageBox.Show(ex.Message, t.Translate("SeleccionarPropiedad.title"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void btnBuscar_Click(object sender, EventArgs e)
@@ -143,6 +152,7 @@ namespace Servicios
         {
             dgvPropiedades.DataSource = null;
             dgvPropiedades.DataSource = propiedades;
+            dgvPropiedades.ClearSelection();
 
             _cantidadResultados = propiedades.Count;
             MostrarResultados();
@@ -238,6 +248,9 @@ namespace Servicios
         {
             var t = ServiceSessionManager577MC.getIntancia().Idioma;
 
+            string tipoActual = cboTipoABM.SelectedValue as string;
+            string estadoActual = cboEstadoABM.SelectedValue as string;
+
             foreach (var combo in new[] { cboTipoABM, cboEstadoABM })
             {
                 combo.Items.Clear();
@@ -256,6 +269,9 @@ namespace Servicios
             }
             cboEstadoABM.DisplayMember = "Display";
             cboEstadoABM.ValueMember = "Valor";
+
+            SeleccionarItemPorValor(cboTipoABM, tipoActual);
+            SeleccionarItemPorValor(cboEstadoABM, estadoActual);
         }
 
         private void CargarABM()
@@ -344,9 +360,16 @@ namespace Servicios
 
             try
             {
-                _propiedadBLL.RegistrarPropiedad(propiedad);
-
-                MessageBox.Show(t.Translate("SeleccionarPropiedad.msgPropiedadGuardada"), t.Translate("SeleccionarPropiedad.title"), MessageBoxButtons.OK, MessageBoxIcon.Information);
+                if (_idSeleccionado.HasValue)
+                {
+                    _propiedadBLL.ModificarPropiedad(propiedad);
+                    MessageBox.Show(t.Translate("SeleccionarPropiedad.msgPropiedadModificada"), t.Translate("SeleccionarPropiedad.title"), MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+                else
+                {
+                    _propiedadBLL.RegistrarPropiedad(propiedad);
+                    MessageBox.Show(t.Translate("SeleccionarPropiedad.msgPropiedadGuardada"), t.Translate("SeleccionarPropiedad.title"), MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
 
                 LimpiarABM();
                 AplicarFiltro();
@@ -446,15 +469,17 @@ namespace Servicios
 
         private static void SeleccionarItemPorValor(ComboBox combo, string valor)
         {
-            if (string.IsNullOrEmpty(valor))
+            if (string.IsNullOrWhiteSpace(valor))
             {
                 combo.SelectedIndex = -1;
                 return;
             }
 
+            valor = valor.Trim();
+
             foreach (ItemCombo item in combo.Items)
             {
-                if (item.Valor == valor)
+                if (string.Equals(item.Valor, valor, StringComparison.OrdinalIgnoreCase))
                 {
                     combo.SelectedItem = item;
                     return;

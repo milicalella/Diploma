@@ -51,6 +51,32 @@ namespace BLL
             return lista;
         }
 
+        public Cliente577MC ObtenerPorDNI(string dni)
+        {
+            if (string.IsNullOrWhiteSpace(dni))
+            {
+                return null;
+            }
+
+            DataTable dt = dal.ObtenerPorDNI(dni.Trim());
+
+            if (dt.Rows.Count == 0)
+            {
+                return null;
+            }
+
+            DataRow r = dt.Rows[0];
+
+            return new Cliente577MC
+            {
+                DNI = r["DNI"].ToString(),
+                Nombre = r["Nombre"].ToString(),
+                Apellido = r["Apellido"].ToString(),
+                Telefono = r["Telefono"].ToString(),
+                Email = r["Email"].ToString()
+            };
+        }
+
         public void ModificarCliente(Cliente577MC cliente)
         {
             if (!dal.ExisteCliente(cliente.DNI))
