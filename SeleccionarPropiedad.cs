@@ -87,8 +87,8 @@ namespace Servicios
             try
             {
                 _dirFiltro = txtDireccion.Text;
-                _tipoFiltro = cboTipo.SelectedValue as string;
-                _estadoFiltro = cboEstado.SelectedValue as string;
+                _tipoFiltro = ValorSeleccionado(cboTipo);
+                _estadoFiltro = ValorSeleccionado(cboEstado);
                 _precioMinFiltro = LeerPrecio(txtPrecioMin.Text, "minimo");
                 _precioMaxFiltro = LeerPrecio(txtPrecioMax.Text, "maximo");
 
@@ -144,7 +144,7 @@ namespace Servicios
         {
             if (_modoAbm && e.RowIndex >= 0)
             {
-                CargarABM();
+                CargarABM(e.RowIndex);
             }
         }
 
@@ -223,22 +223,26 @@ namespace Servicios
         {
             var t = ServiceSessionManager577MC.getIntancia().Idioma;
 
-            string tipoActual = cboTipo.SelectedValue as string;
-            cboTipo.Items.Clear();
-            foreach (var valor in new[] { "Casa", "Departamento", "Local", "Terreno" })
+            string tipoActual = ValorSeleccionado(cboTipo);
+            cboTipo.DataSource = new BindingList<ItemCombo>(new[]
             {
-                cboTipo.Items.Add(new ItemCombo { Display = t.Translate("TipoPropiedad." + valor), Valor = valor });
-            }
+                new ItemCombo { Display = t.Translate("TipoPropiedad.Casa"), Valor = "Casa" },
+                new ItemCombo { Display = t.Translate("TipoPropiedad.Departamento"), Valor = "Departamento" },
+                new ItemCombo { Display = t.Translate("TipoPropiedad.Local"), Valor = "Local" },
+                new ItemCombo { Display = t.Translate("TipoPropiedad.Terreno"), Valor = "Terreno" }
+            }.ToList());
             cboTipo.DisplayMember = "Display";
             cboTipo.ValueMember = "Valor";
             SeleccionarItemPorValor(cboTipo, tipoActual);
 
-            string estadoActual = cboEstado.SelectedValue as string;
-            cboEstado.Items.Clear();
-            foreach (var valor in new[] { "Disponible", "Vendida", "Alquilada", "Reservada" })
+            string estadoActual = ValorSeleccionado(cboEstado);
+            cboEstado.DataSource = new BindingList<ItemCombo>(new[]
             {
-                cboEstado.Items.Add(new ItemCombo { Display = t.Translate("EstadoPropiedad." + valor), Valor = valor });
-            }
+                new ItemCombo { Display = t.Translate("EstadoPropiedad.Disponible"), Valor = "Disponible" },
+                new ItemCombo { Display = t.Translate("EstadoPropiedad.Vendida"), Valor = "Vendida" },
+                new ItemCombo { Display = t.Translate("EstadoPropiedad.Alquilada"), Valor = "Alquilada" },
+                new ItemCombo { Display = t.Translate("EstadoPropiedad.Reservada"), Valor = "Reservada" }
+            }.ToList());
             cboEstado.DisplayMember = "Display";
             cboEstado.ValueMember = "Valor";
             SeleccionarItemPorValor(cboEstado, estadoActual);
@@ -248,25 +252,26 @@ namespace Servicios
         {
             var t = ServiceSessionManager577MC.getIntancia().Idioma;
 
-            string tipoActual = cboTipoABM.SelectedValue as string;
-            string estadoActual = cboEstadoABM.SelectedValue as string;
+            string tipoActual = ValorSeleccionado(cboTipoABM);
+            string estadoActual = ValorSeleccionado(cboEstadoABM);
 
-            foreach (var combo in new[] { cboTipoABM, cboEstadoABM })
+            cboTipoABM.DataSource = new BindingList<ItemCombo>(new[]
             {
-                combo.Items.Clear();
-            }
-
-            foreach (var valor in new[] { "Casa", "Departamento", "Local", "Terreno" })
-            {
-                cboTipoABM.Items.Add(new ItemCombo { Display = t.Translate("TipoPropiedad." + valor), Valor = valor });
-            }
+                new ItemCombo { Display = t.Translate("TipoPropiedad.Casa"), Valor = "Casa" },
+                new ItemCombo { Display = t.Translate("TipoPropiedad.Departamento"), Valor = "Departamento" },
+                new ItemCombo { Display = t.Translate("TipoPropiedad.Local"), Valor = "Local" },
+                new ItemCombo { Display = t.Translate("TipoPropiedad.Terreno"), Valor = "Terreno" }
+            }.ToList());
             cboTipoABM.DisplayMember = "Display";
             cboTipoABM.ValueMember = "Valor";
 
-            foreach (var valor in new[] { "Disponible", "Vendida", "Alquilada", "Reservada" })
+            cboEstadoABM.DataSource = new BindingList<ItemCombo>(new[]
             {
-                cboEstadoABM.Items.Add(new ItemCombo { Display = t.Translate("EstadoPropiedad." + valor), Valor = valor });
-            }
+                new ItemCombo { Display = t.Translate("EstadoPropiedad.Disponible"), Valor = "Disponible" },
+                new ItemCombo { Display = t.Translate("EstadoPropiedad.Vendida"), Valor = "Vendida" },
+                new ItemCombo { Display = t.Translate("EstadoPropiedad.Alquilada"), Valor = "Alquilada" },
+                new ItemCombo { Display = t.Translate("EstadoPropiedad.Reservada"), Valor = "Reservada" }
+            }.ToList());
             cboEstadoABM.DisplayMember = "Display";
             cboEstadoABM.ValueMember = "Valor";
 
@@ -288,11 +293,29 @@ namespace Servicios
                 propiedad = dgvPropiedades.CurrentRow.DataBoundItem as Propiedad577MC;
             }
 
-            if (propiedad == null)
+            if (propiedad != null)
+            {
+                RellenarABM(propiedad);
+            }
+        }
+
+        private void CargarABM(int rowIndex)
+        {
+            if (rowIndex < 0 || rowIndex >= dgvPropiedades.Rows.Count)
             {
                 return;
             }
 
+            Propiedad577MC propiedad = dgvPropiedades.Rows[rowIndex].DataBoundItem as Propiedad577MC;
+
+            if (propiedad != null)
+            {
+                RellenarABM(propiedad);
+            }
+        }
+
+        private void RellenarABM(Propiedad577MC propiedad)
+        {
             _idSeleccionado = propiedad.Id;
             txtDirABM.Text = propiedad.Direccion;
             txtPrecioABM.Text = propiedad.Precio.ToString("N2", CultureInfo.CurrentCulture);
@@ -336,8 +359,8 @@ namespace Servicios
             {
                 Id = _idSeleccionado ?? 0,
                 Direccion = txtDirABM.Text.Trim(),
-                Tipo = cboTipoABM.SelectedValue as string,
-                Estado = cboEstadoABM.SelectedValue as string,
+                Tipo = ValorSeleccionado(cboTipoABM),
+                Estado = ValorSeleccionado(cboEstadoABM),
                 Precio = precio,
                 SuperficieM2 = superficie,
                 Ambientes = ambientes,
@@ -465,6 +488,18 @@ namespace Servicios
             cboTipoABM.SelectedIndex = -1;
             cboEstadoABM.SelectedIndex = -1;
             dgvPropiedades.ClearSelection();
+        }
+
+        private static string ValorSeleccionado(ComboBox combo)
+        {
+            string valor = combo.SelectedValue as string;
+
+            if (string.IsNullOrEmpty(valor) && combo.SelectedItem is ItemCombo item)
+            {
+                valor = item.Valor;
+            }
+
+            return valor;
         }
 
         private static void SeleccionarItemPorValor(ComboBox combo, string valor)

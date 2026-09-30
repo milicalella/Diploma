@@ -97,6 +97,7 @@ private void InitializeComponent()
             this.colEstado,
             this.colPrecio});
             this.dgvPropiedades.DoubleClick += new System.EventHandler(this.dgvPropiedades_DoubleClick);
+            this.dgvPropiedades.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvPropiedades_CellClick);
             // 
             // colId
             // 
