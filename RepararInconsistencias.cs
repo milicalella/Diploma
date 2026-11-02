@@ -1,4 +1,4 @@
-﻿﻿using BLL;
+﻿using BLL;
 using Services.Modelos.Idioma;
 using Services_577MC;
 using System;
@@ -16,7 +16,7 @@ namespace Servicios
 {
     public partial class RepararInconsistencias : Form, IIdiomaObserver
     {
-        private bool usuarioOk, rolOk, familiaOk, patenteOk;
+        private bool usuarioOk, rolOk, familiaOk, patenteOk, contratoOk;
 
         private void btnRecalcular_Click(object sender, EventArgs e)
         {
@@ -28,6 +28,7 @@ namespace Servicios
                 if (!rolOk) DigitoVerificador577MC.RepararRol();
                 if (!familiaOk) DigitoVerificador577MC.RepararFamilia();
                 if (!patenteOk) DigitoVerificador577MC.RepararPatente();
+                if (!contratoOk) DigitoVerificador577MC.RepararContrato();
 
                 MessageBox.Show(idioma.Translate("MsgReparacionExitosa"));
 
@@ -73,7 +74,7 @@ namespace Servicios
             }
         }
 
-        public RepararInconsistencias(bool usuarioOk, bool rolOk, bool familiaOk, bool patenteOk)
+        public RepararInconsistencias(bool usuarioOk, bool rolOk, bool familiaOk, bool patenteOk, bool contratoOk)
         {
             InitializeComponent();
 
@@ -81,6 +82,7 @@ namespace Servicios
             this.rolOk = rolOk;
             this.familiaOk = familiaOk;
             this.patenteOk = patenteOk;
+            this.contratoOk = contratoOk;
 
             ServiceSessionManager577MC.getIntancia().Idioma.Suscribir(this);
 
@@ -111,6 +113,7 @@ namespace Servicios
             if (!rolOk) mensaje += "- Rol\n";
             if (!familiaOk) mensaje += "- Familia\n";
             if (!patenteOk) mensaje += "- Patente\n";
+            if (!contratoOk) mensaje += "- Contrato\n";
 
             lblMensaje.Text = mensaje;
         }

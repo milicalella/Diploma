@@ -32,6 +32,23 @@ namespace BLL
             return Mapear(dt);
         }
 
+        public Propiedad577MC ObtenerPorId(int idPropiedad)
+        {
+            if (idPropiedad <= 0)
+            {
+                return null;
+            }
+
+            DataTable dt = dal.ObtenerPorId(idPropiedad);
+
+            if (dt.Rows.Count == 0)
+            {
+                return null;
+            }
+
+            return Mapear(dt).FirstOrDefault();
+        }
+
         public bool TieneVisitas(int idPropiedad)
         {
             return dal.TieneVisitas(idPropiedad);
@@ -147,17 +164,9 @@ namespace BLL
 
         private long CalcularDVHPropiedad(int id, Propiedad577MC propiedad)
         {
-            string cadena = id.ToString() +
-                            propiedad.Direccion.Trim() +
-                            propiedad.Tipo.Trim() +
-                            propiedad.Estado.Trim() +
-                            propiedad.Precio.ToString("0.00", CultureInfo.InvariantCulture) +
-                            propiedad.SuperficieM2.ToString("0.00", CultureInfo.InvariantCulture) +
-                            propiedad.Ambientes +
-                            propiedad.Dormitorios +
-                            propiedad.Banios;
-
-            return DigitoVerificador577MC.CalcularDVH(cadena);
+            return DigitoVerificador577MC.CalcularDVHPropiedad(id, propiedad.Direccion.Trim(), propiedad.Tipo.Trim(),
+                propiedad.Estado.Trim(), propiedad.Precio, propiedad.SuperficieM2, propiedad.Ambientes,
+                propiedad.Dormitorios, propiedad.Banios);
         }
 
         private void ValidarCriterios(string direccion, string tipo, string estado, decimal? precioMin, decimal? precioMax)

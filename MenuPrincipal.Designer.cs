@@ -43,11 +43,15 @@
             this.gestionRolToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.gestionRespaldoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clientesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.agendarVisitaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.programarVisitaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.actualizarEstadoVisitaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.maestrosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.abmClientesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.abmPropiedadesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.contratosToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.generarContratoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.actualizarEstadoContratoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.reimprimirContratoToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ayudaToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
@@ -63,6 +67,7 @@
             this.administradorToolStripMenuItem,
             this.clientesToolStripMenuItem,
             this.maestrosToolStripMenuItem,
+            this.contratosToolStripMenuItem,
             this.ayudaToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
@@ -176,19 +181,19 @@
             // clientesToolStripMenuItem
             // 
             this.clientesToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.agendarVisitaToolStripMenuItem,
+            this.programarVisitaToolStripMenuItem,
             this.actualizarEstadoVisitaToolStripMenuItem});
             this.clientesToolStripMenuItem.Name = "clientesToolStripMenuItem";
             this.clientesToolStripMenuItem.Size = new System.Drawing.Size(62, 23);
             this.clientesToolStripMenuItem.Text = "Visitas";
             this.clientesToolStripMenuItem.Click += new System.EventHandler(this.clientesToolStripMenuItem_Click);
             // 
-            // agendarVisitaToolStripMenuItem
+            // programarVisitaToolStripMenuItem
             // 
-            this.agendarVisitaToolStripMenuItem.Name = "agendarVisitaToolStripMenuItem";
-            this.agendarVisitaToolStripMenuItem.Size = new System.Drawing.Size(225, 24);
-            this.agendarVisitaToolStripMenuItem.Text = "Agendar Visita";
-            this.agendarVisitaToolStripMenuItem.Click += new System.EventHandler(this.agendarVisitaToolStripMenuItem_Click);
+            this.programarVisitaToolStripMenuItem.Name = "programarVisitaToolStripMenuItem";
+            this.programarVisitaToolStripMenuItem.Size = new System.Drawing.Size(225, 24);
+            this.programarVisitaToolStripMenuItem.Text = "Programar Visita";
+            this.programarVisitaToolStripMenuItem.Click += new System.EventHandler(this.programarVisitaToolStripMenuItem_Click);
             // 
             // actualizarEstadoVisitaToolStripMenuItem
             // 
@@ -219,6 +224,37 @@
             this.abmPropiedadesToolStripMenuItem.Size = new System.Drawing.Size(154, 24);
             this.abmPropiedadesToolStripMenuItem.Text = "Propiedades";
             this.abmPropiedadesToolStripMenuItem.Click += new System.EventHandler(this.abmPropiedadesToolStripMenuItem_Click);
+            // 
+            // contratosToolStripMenuItem
+            // 
+            this.contratosToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.generarContratoToolStripMenuItem,
+            this.actualizarEstadoContratoToolStripMenuItem,
+            this.reimprimirContratoToolStripMenuItem});
+            this.contratosToolStripMenuItem.Name = "contratosToolStripMenuItem";
+            this.contratosToolStripMenuItem.Size = new System.Drawing.Size(78, 23);
+            this.contratosToolStripMenuItem.Text = "Contratos";
+            // 
+            // generarContratoToolStripMenuItem
+            // 
+            this.generarContratoToolStripMenuItem.Name = "generarContratoToolStripMenuItem";
+            this.generarContratoToolStripMenuItem.Size = new System.Drawing.Size(180, 24);
+            this.generarContratoToolStripMenuItem.Text = "Generar Contrato";
+            this.generarContratoToolStripMenuItem.Click += new System.EventHandler(this.generarContratoToolStripMenuItem_Click);
+            // 
+            // actualizarEstadoContratoToolStripMenuItem
+            // 
+            this.actualizarEstadoContratoToolStripMenuItem.Name = "actualizarEstadoContratoToolStripMenuItem";
+            this.actualizarEstadoContratoToolStripMenuItem.Size = new System.Drawing.Size(260, 24);
+            this.actualizarEstadoContratoToolStripMenuItem.Text = "Actualizar Estado de Propiedad y Contrato";
+            this.actualizarEstadoContratoToolStripMenuItem.Click += new System.EventHandler(this.actualizarEstadoContratoToolStripMenuItem_Click);
+            // 
+            // reimprimirContratoToolStripMenuItem
+            // 
+            this.reimprimirContratoToolStripMenuItem.Name = "reimprimirContratoToolStripMenuItem";
+            this.reimprimirContratoToolStripMenuItem.Size = new System.Drawing.Size(260, 24);
+            this.reimprimirContratoToolStripMenuItem.Text = "Reimprimir Copia Final";
+            this.reimprimirContratoToolStripMenuItem.Click += new System.EventHandler(this.reimprimirContratoToolStripMenuItem_Click);
             // 
             // ayudaToolStripMenuItem
             // 
@@ -277,10 +313,14 @@
         private System.Windows.Forms.ToolStripMenuItem englishToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem gestionRespaldoToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem clientesToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem agendarVisitaToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem programarVisitaToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem actualizarEstadoVisitaToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem maestrosToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem abmClientesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem abmPropiedadesToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem contratosToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem generarContratoToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem actualizarEstadoContratoToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem reimprimirContratoToolStripMenuItem;
     }
 }

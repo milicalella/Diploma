@@ -71,8 +71,12 @@ namespace DAL
                              SELECT Id, Nombre, DVH FROM Rol;
                              SELECT Id, Nombre, DVH FROM Familia;
                              SELECT Id, Nombre, DVH FROM Patente;
+                             SELECT NroContrato, FechaEmision, DNIPropietario, DNICliente, CodigoPropiedad,
+                                    TipoContrato, FechaInicio, FechaFin, MontoAcordado, FormaPago,
+                                    DepositoGarantia, Estado, DVH
+                             FROM Contrato;
                              SELECT NombreTabla, DVH, DVV FROM DigitoVerificador
-                             WHERE NombreTabla IN ('Usuario', 'Rol', 'Familia', 'Patente');";
+                             WHERE NombreTabla IN ('Usuario', 'Rol', 'Familia', 'Patente', 'Contrato');";
             return acceso.executeDataTableBatch(query);
         }
     }

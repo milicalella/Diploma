@@ -54,10 +54,11 @@ namespace Servicios
                 bool rolOk = integridad.Rol;
                 bool familiaOk = integridad.Familia;
                 bool patenteOk = integridad.Patente;
+                bool contratoOk = integridad.Contrato;
 
 
                 
-                if (!usuarioOk || !rolOk || !familiaOk || !patenteOk)
+                if (!usuarioOk || !rolOk || !familiaOk || !patenteOk || !contratoOk)
                 {
                     if (ServiceSessionManager577MC.getIntancia().usuarioActivo.Rol.Id != 1)
                     {
@@ -69,7 +70,7 @@ namespace Servicios
 
                     }
                     this.Hide();
-                    RepararInconsistencias pantalla = new RepararInconsistencias(usuarioOk, rolOk, familiaOk, patenteOk);
+                    RepararInconsistencias pantalla = new RepararInconsistencias(usuarioOk, rolOk, familiaOk, patenteOk, contratoOk);
                     pantalla.FormClosed += (s, args) => RestaurarIdiomaLogin();
                     pantalla.Show();
                     return;

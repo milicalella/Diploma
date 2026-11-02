@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace Servicios
 {
-    public partial class FrmConsultarDisponibilidad : Form, IIdiomaObserver
+    public partial class ConsultarDisponibilidad : Form, IIdiomaObserver
     {
         private readonly Propiedad577MC _propiedad;
         private readonly BLLVisita577MC _visitaBLL = new BLLVisita577MC();
@@ -17,7 +17,7 @@ namespace Servicios
         private bool _consultado;
         private bool _disponible;
 
-        public FrmConsultarDisponibilidad(Propiedad577MC propiedad)
+        public ConsultarDisponibilidad(Propiedad577MC propiedad)
         {
             if (propiedad == null)
             {
@@ -52,7 +52,7 @@ namespace Servicios
             get { return _consultado && _disponible; }
         }
 
-        private void FrmConsultarDisponibilidad_Load(object sender, EventArgs e)
+        private void ConsultarDisponibilidad_Load(object sender, EventArgs e)
         {
             dtpFecha.Value = DateTime.Today;
             dtpHoraInicio.Value = DateTime.Today.AddHours(10);
@@ -71,7 +71,7 @@ namespace Servicios
 
             if (inicio >= fin)
             {
-                MessageBox.Show(t.Translate("VisitaException.msgHoraInvalida"), t.Translate("FrmConsultarDisponibilidad.formTitle"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(t.Translate("VisitaException.msgHoraInvalida"), t.Translate("ConsultarDisponibilidad.formTitle"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -85,7 +85,7 @@ namespace Servicios
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, t.Translate("FrmConsultarDisponibilidad.formTitle"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message, t.Translate("ConsultarDisponibilidad.formTitle"), MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -110,12 +110,12 @@ namespace Servicios
             if (_disponible)
             {
                 lblResultado.ForeColor = Color.Green;
-                lblResultado.Text = t.Translate("FrmConsultarDisponibilidad.msgDisponible");
+                lblResultado.Text = t.Translate("ConsultarDisponibilidad.msgDisponible");
             }
             else
             {
                 lblResultado.ForeColor = Color.Red;
-                lblResultado.Text = t.Translate("FrmConsultarDisponibilidad.msgNoDisponible");
+                lblResultado.Text = t.Translate("ConsultarDisponibilidad.msgNoDisponible");
             }
         }
 
@@ -131,8 +131,8 @@ namespace Servicios
             catch (Exception ex)
             {
                 MessageBox.Show(
-                    string.Format(ServiceSessionManager577MC.getIntancia().Idioma.Translate("FrmConsultarDisponibilidad.msgErrorVisitas"), ex.Message),
-                    ServiceSessionManager577MC.getIntancia().Idioma.Translate("FrmConsultarDisponibilidad.formTitle"),
+                    string.Format(ServiceSessionManager577MC.getIntancia().Idioma.Translate("ConsultarDisponibilidad.msgErrorVisitas"), ex.Message),
+                    ServiceSessionManager577MC.getIntancia().Idioma.Translate("ConsultarDisponibilidad.formTitle"),
                     MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
             }
@@ -144,13 +144,13 @@ namespace Servicios
 
             if (!_consultado)
             {
-                MessageBox.Show(t.Translate("FrmConsultarDisponibilidad.msgDebeConsultar"), t.Translate("FrmConsultarDisponibilidad.formTitle"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(t.Translate("ConsultarDisponibilidad.msgDebeConsultar"), t.Translate("ConsultarDisponibilidad.formTitle"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
             if (!_disponible)
             {
-                MessageBox.Show(t.Translate("FrmConsultarDisponibilidad.msgNoDisponibleAceptar"), t.Translate("FrmConsultarDisponibilidad.formTitle"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(t.Translate("ConsultarDisponibilidad.msgNoDisponibleAceptar"), t.Translate("ConsultarDisponibilidad.formTitle"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -166,20 +166,20 @@ namespace Servicios
         {
             var t = ServiceSessionManager577MC.getIntancia().Idioma;
 
-            this.Text = t.Translate("FrmConsultarDisponibilidad.formTitle");
-            lblTitulo.Text = t.Translate("FrmConsultarDisponibilidad.formTitle");
-            gbPropiedad.Text = t.Translate("FrmConsultarDisponibilidad.gbPropiedad");
-            gbHorario.Text = t.Translate("FrmConsultarDisponibilidad.gbHorario");
-            lblFecha.Text = t.Translate("FrmConsultarDisponibilidad.labelFecha");
-            lblInicio.Text = t.Translate("FrmConsultarDisponibilidad.labelInicio");
-            lblFin.Text = t.Translate("FrmConsultarDisponibilidad.labelFin");
-            btnConsultar.Text = t.Translate("FrmConsultarDisponibilidad.btnConsultar");
-            btnAceptar.Text = t.Translate("FrmConsultarDisponibilidad.btnAceptar");
-            btnCancelar.Text = t.Translate("FrmConsultarDisponibilidad.btnCancelar");
-            lblTituloVisitas.Text = t.Translate("FrmConsultarDisponibilidad.labelVisitasDelDia");
+            this.Text = t.Translate("ConsultarDisponibilidad.formTitle");
+            lblTitulo.Text = t.Translate("ConsultarDisponibilidad.formTitle");
+            gbPropiedad.Text = t.Translate("ConsultarDisponibilidad.gbPropiedad");
+            gbHorario.Text = t.Translate("ConsultarDisponibilidad.gbHorario");
+            lblFecha.Text = t.Translate("ConsultarDisponibilidad.labelFecha");
+            lblInicio.Text = t.Translate("ConsultarDisponibilidad.labelInicio");
+            lblFin.Text = t.Translate("ConsultarDisponibilidad.labelFin");
+            btnConsultar.Text = t.Translate("ConsultarDisponibilidad.btnConsultar");
+            btnAceptar.Text = t.Translate("ConsultarDisponibilidad.btnAceptar");
+            btnCancelar.Text = t.Translate("ConsultarDisponibilidad.btnCancelar");
+            lblTituloVisitas.Text = t.Translate("ConsultarDisponibilidad.labelVisitasDelDia");
             colIdVisita.HeaderText = t.Translate("ActualizarEstadoVisita.colIdVisita");
-            colHorario.HeaderText = t.Translate("FrmConsultarDisponibilidad.colHorario");
-            colEstado.HeaderText = t.Translate("FrmConsultarDisponibilidad.colEstado");
+            colHorario.HeaderText = t.Translate("ConsultarDisponibilidad.colHorario");
+            colEstado.HeaderText = t.Translate("ConsultarDisponibilidad.colEstado");
 
             lblPropiedadInfo.Text = ObtenerDetallePropiedad();
 
@@ -194,7 +194,7 @@ namespace Servicios
             var t = ServiceSessionManager577MC.getIntancia().Idioma;
 
             return string.Format(
-                t.Translate("RegistrarVisita.msgDetallePropiedad"),
+                t.Translate("ProgramarVisita.msgDetallePropiedad"),
                 _propiedad.Direccion,
                 t.Translate("TipoPropiedad." + _propiedad.Tipo),
                 t.Translate("EstadoPropiedad." + _propiedad.Estado),

@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="DALConexionConfig577MC.cs" />
     <Compile Include="DALCliente577MC.cs" />
+    <Compile Include="DALContrato577MC.cs" />
     <Compile Include="DALPropiedad577MC.cs" />
     <Compile Include="DALVisita577MC.cs" />
     <Compile Include="DALAcceso577MC.cs" />
@@ -57,6 +58,7 @@
     <Compile Include="DALPatente577MC.cs" />
     <Compile Include="DALRol577MC.cs" />
     <Compile Include="DALUsuario577MC.cs" />
+    <Compile Include="obj\Debug\.NETFramework,Version=v4.7.2.AssemblyAttributes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -64,6 +66,27 @@
       <Project>{1dce08c7-4239-4595-9712-bac2bbec9de8}</Project>
       <Name>BE_577MC</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="obj\Debug\DAL.csproj.AssemblyReference.cache" />
+    <None Include="obj\Debug\DAL_55CA.csproj.AssemblyReference.cache" />
+    <None Include="obj\Debug\DAL_577MC.csproj.AssemblyReference.cache" />
+    <None Include="obj\Debug\DAL_577MC.csproj.CoreCompileInputs.cache" />
+    <None Include="obj\Debug\DAL_577MC.csproj.Up2Date" />
+    <None Include="obj\Debug\DesignTimeResolveAssemblyReferences.cache" />
+    <None Include="obj\Debug\DesignTimeResolveAssemblyReferencesInput.cache" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="bin\Debug\BE.dll" />
+    <Content Include="bin\Debug\BE.pdb" />
+    <Content Include="bin\Debug\DAL.dll" />
+    <Content Include="bin\Debug\DAL.pdb" />
+    <Content Include="obj\Debug\DAL.dll" />
+    <Content Include="obj\Debug\DAL.pdb" />
+    <Content Include="obj\Debug\DAL_577MC.csproj.FileListAbsolute.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="obj\Debug\TempPE\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

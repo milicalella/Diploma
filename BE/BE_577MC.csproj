@@ -42,6 +42,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Cliente577MC.cs" />
+    <Compile Include="Contrato577MC.cs" />
+    <Compile Include="TerminosContrato577MC.cs" />
+    <Compile Include="obj\Debug\.NETFramework,Version=v4.7.2.AssemblyAttributes.cs" />
     <Compile Include="Propiedad577MC.cs" />
     <Compile Include="Visita577MC.cs" />
     <Compile Include="Enum\Criticidad577MC.cs" />
@@ -49,6 +52,23 @@
     <Compile Include="Idioma577MC.cs" />
     <Compile Include="InstanciaSql577MC.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="bin\Debug\BE.dll" />
+    <Content Include="bin\Debug\BE.pdb" />
+    <Content Include="obj\Debug\BE.dll" />
+    <Content Include="obj\Debug\BE.pdb" />
+    <Content Include="obj\Debug\BE_577MC.csproj.FileListAbsolute.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="obj\Debug\BE.csproj.AssemblyReference.cache" />
+    <None Include="obj\Debug\BE55_CA.csproj.AssemblyReference.cache" />
+    <None Include="obj\Debug\BE_577MC.csproj.AssemblyReference.cache" />
+    <None Include="obj\Debug\BE_577MC.csproj.CoreCompileInputs.cache" />
+    <None Include="obj\Debug\DesignTimeResolveAssemblyReferencesInput.cache" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="obj\Debug\TempPE\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

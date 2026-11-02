@@ -13,6 +13,7 @@ namespace BE.Enum
         Perfil = 3,
         Cliente = 4,
         Propiedades = 5,
-        Visita = 6
+        Visita = 6,
+        Contrato = 7
     }
 }

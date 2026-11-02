@@ -1,6 +1,6 @@
 namespace Servicios
 {
-    partial class FrmConsultarDisponibilidad
+    partial class ConsultarDisponibilidad
     {
         /// <summary>
         /// Variable del diseñador necesaria.
@@ -255,7 +255,7 @@ namespace Servicios
             this.btnCancelar.UseVisualStyleBackColor = false;
             this.btnCancelar.Click += new System.EventHandler(this.btnCancelar_Click);
             // 
-            // FrmConsultarDisponibilidad
+            // ConsultarDisponibilidad
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -268,9 +268,9 @@ namespace Servicios
             this.Controls.Add(this.gbHorario);
             this.Controls.Add(this.gbPropiedad);
             this.Controls.Add(this.lblTitulo);
-            this.Name = "FrmConsultarDisponibilidad";
+            this.Name = "ConsultarDisponibilidad";
             this.Text = "Consultar Disponibilidad";
-            this.Load += new System.EventHandler(this.FrmConsultarDisponibilidad_Load);
+            this.Load += new System.EventHandler(this.ConsultarDisponibilidad_Load);
             this.gbPropiedad.ResumeLayout(false);
             this.gbHorario.ResumeLayout(false);
             this.gbHorario.PerformLayout();

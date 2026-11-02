@@ -43,6 +43,7 @@
   <ItemGroup>
     <Compile Include="BLLBitacora577MC.cs" />
     <Compile Include="BLLCliente577MC.cs" />
+    <Compile Include="BLLContrato577MC.cs" />
     <Compile Include="BLLPropiedad577MC.cs" />
     <Compile Include="BLLVisita577MC.cs" />
     <Compile Include="BLLFamilia577MC.cs" />

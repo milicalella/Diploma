@@ -1,6 +1,6 @@
 namespace Servicios
 {
-    partial class RegistrarVisita
+    partial class ProgramarVisita
     {
         /// <summary>
         /// Variable del diseñador necesaria.
@@ -58,7 +58,7 @@ namespace Servicios
             this.lblTitulo.Name = "lblTitulo";
             this.lblTitulo.Size = new System.Drawing.Size(202, 23);
             this.lblTitulo.TabIndex = 0;
-            this.lblTitulo.Text = "Registro de Visita";
+            this.lblTitulo.Text = "Programar Visita";
             // 
             // gbCliente
             // 
@@ -289,7 +289,7 @@ namespace Servicios
             this.lblResultadoRegistro.TabIndex = 6;
             this.lblResultadoRegistro.Text = "-";
             // 
-            // RegistrarVisita
+            // ProgramarVisita
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -303,9 +303,9 @@ namespace Servicios
             this.Controls.Add(this.gbPropiedad);
             this.Controls.Add(this.gbCliente);
             this.Controls.Add(this.lblTitulo);
-            this.Name = "RegistrarVisita";
-            this.Text = "Registro de Visita";
-            this.Load += new System.EventHandler(this.RegistrarVisita_Load);
+            this.Name = "ProgramarVisita";
+            this.Text = "Programar Visita";
+            this.Load += new System.EventHandler(this.ProgramarVisita_Load);
             this.gbCliente.ResumeLayout(false);
             this.gbCliente.PerformLayout();
             this.gbPropiedad.ResumeLayout(false);

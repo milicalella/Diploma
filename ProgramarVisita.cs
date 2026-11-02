@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace Servicios
 {
-    public partial class RegistrarVisita : Form, IIdiomaObserver
+    public partial class ProgramarVisita : Form, IIdiomaObserver
     {
         BLLCliente577MC _clienteBLL = new BLLCliente577MC();
         BLLVisita577MC _visitaBLL = new BLLVisita577MC();
@@ -21,7 +21,7 @@ namespace Servicios
         Visita577MC _ultimaVisita;
         string _direccionUltimaVisita;
 
-        public RegistrarVisita()
+        public ProgramarVisita()
         {
             InitializeComponent();
 
@@ -29,7 +29,7 @@ namespace Servicios
             actualizarIdioma();
         }
 
-        private void RegistrarVisita_Load(object sender, EventArgs e)
+        private void ProgramarVisita_Load(object sender, EventArgs e)
         {
             dtpFecha.Value = DateTime.Today;
             dtpHoraInicio.Value = DateTime.Today.AddHours(10);
@@ -77,8 +77,8 @@ namespace Servicios
             RefrescarLabelsInfo();
 
             DialogResult respuesta = MessageBox.Show(
-                t.Translate("RegistrarVisita.msgPreguntaRegistrarCliente"),
-                t.Translate("RegistrarVisita.msgClienteNoEncontradoTitulo"),
+                t.Translate("ProgramarVisita.msgPreguntaRegistrarCliente"),
+                t.Translate("ProgramarVisita.msgClienteNoEncontradoTitulo"),
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Question);
 
@@ -117,7 +117,7 @@ namespace Servicios
 
             if (dni.Length < 7 || dni.Length > 8 || dni.Any(c => !char.IsDigit(c)))
             {
-                MessageBox.Show(t.Translate("RegistrarVisita.msgDNIInvalido"), t.Translate("RegistrarVisita.title"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(t.Translate("ProgramarVisita.msgDNIInvalido"), t.Translate("ProgramarVisita.title"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return false;
             }
 
@@ -147,7 +147,7 @@ namespace Servicios
             var t = ServiceSessionManager577MC.getIntancia().Idioma;
 
             return string.Format(
-                t.Translate("RegistrarVisita.msgDetallePropiedad"),
+                t.Translate("ProgramarVisita.msgDetallePropiedad"),
                 _propiedad.Direccion,
                 t.Translate("TipoPropiedad." + _propiedad.Tipo),
                 t.Translate("EstadoPropiedad." + _propiedad.Estado),
@@ -166,13 +166,13 @@ namespace Servicios
             {
                 if (_cliente == null)
                 {
-                    MessageBox.Show(t.Translate("RegistrarVisita.msgBuscarCliente"), t.Translate("RegistrarVisita.title"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show(t.Translate("ProgramarVisita.msgBuscarCliente"), t.Translate("ProgramarVisita.title"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
                 if (_propiedad == null)
                 {
-                    MessageBox.Show(t.Translate("RegistrarVisita.msgSeleccionarPropiedad"), t.Translate("RegistrarVisita.title"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show(t.Translate("ProgramarVisita.msgSeleccionarPropiedad"), t.Translate("ProgramarVisita.title"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
@@ -182,7 +182,7 @@ namespace Servicios
 
                 if (horaInicio >= horaFin)
                 {
-                    MessageBox.Show(t.Translate("RegistrarVisita.msgHoraInvalida"), t.Translate("RegistrarVisita.title"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show(t.Translate("ProgramarVisita.msgHoraInvalida"), t.Translate("ProgramarVisita.title"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
@@ -193,7 +193,7 @@ namespace Servicios
                     _disponibilidad = false;
                     RefrescarLabelsInfo();
 
-                    MessageBox.Show(t.Translate("RegistrarVisita.msgSuperposicion"), t.Translate("RegistrarVisita.title"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show(t.Translate("ProgramarVisita.msgSuperposicion"), t.Translate("ProgramarVisita.title"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
@@ -210,12 +210,12 @@ namespace Servicios
                     Estado = "Pendiente"
                 };
 
-                int idVisita = _visitaBLL.RegistrarVisita(visita);
+                int idVisita = _visitaBLL.ProgramarVisita(visita);
 
                 _ultimoIdVisita = idVisita;
                 RefrescarLabelsInfo();
 
-                MessageBox.Show(t.Translate("RegistrarVisita.msgVisitaRegistrada"), t.Translate("RegistrarVisita.title"), MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show(t.Translate("ProgramarVisita.msgVisitaProgramada"), t.Translate("ProgramarVisita.title"), MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 _ultimaVisita = visita;
                 _direccionUltimaVisita = _propiedad == null ? null : _propiedad.Direccion;
@@ -224,7 +224,7 @@ namespace Servicios
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, t.Translate("RegistrarVisita.title"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message, t.Translate("ProgramarVisita.title"), MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -250,7 +250,7 @@ namespace Servicios
 
             if (_ultimaVisita == null)
             {
-                MessageBox.Show(t.Translate("RegistrarVisita.msgDebeConfirmarReporte"), t.Translate("RegistrarVisita.title"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(t.Translate("ProgramarVisita.msgDebeConfirmarReporte"), t.Translate("ProgramarVisita.title"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -263,11 +263,11 @@ namespace Servicios
 
             if (_propiedad == null)
             {
-                MessageBox.Show(t.Translate("RegistrarVisita.msgSeleccionarPropiedad"), t.Translate("RegistrarVisita.title"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(t.Translate("ProgramarVisita.msgSeleccionarPropiedad"), t.Translate("ProgramarVisita.title"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            using (FrmConsultarDisponibilidad form = new FrmConsultarDisponibilidad(_propiedad))
+            using (ConsultarDisponibilidad form = new ConsultarDisponibilidad(_propiedad))
             {
                 if (form.ShowDialog() != DialogResult.OK)
                 {
@@ -315,11 +315,11 @@ namespace Servicios
 
                 if (!string.IsNullOrEmpty(_cliente.Nombre))
                 {
-                    lblClienteInfo.Text = string.Format(t.Translate("RegistrarVisita.msgClienteRegistrado"), _cliente.Nombre, _cliente.Apellido, _cliente.DNI);
+                    lblClienteInfo.Text = string.Format(t.Translate("ProgramarVisita.msgClienteRegistrado"), _cliente.Nombre, _cliente.Apellido, _cliente.DNI);
                 }
                 else
                 {
-                    lblClienteInfo.Text = string.Format(t.Translate("RegistrarVisita.msgClienteConfirmado"), _cliente.DNI);
+                    lblClienteInfo.Text = string.Format(t.Translate("ProgramarVisita.msgClienteConfirmado"), _cliente.DNI);
                 }
             }
             else if (string.IsNullOrWhiteSpace(txtDNI.Text))
@@ -330,7 +330,7 @@ namespace Servicios
             else
             {
                 lblClienteInfo.ForeColor = Color.DarkRed;
-                lblClienteInfo.Text = t.Translate("RegistrarVisita.msgClienteNoExiste");
+                lblClienteInfo.Text = t.Translate("ProgramarVisita.msgClienteNoExiste");
             }
 
             if (_propiedad != null)
@@ -352,18 +352,18 @@ namespace Servicios
             else if (_disponibilidad.Value)
             {
                 lblDisponibilidad.ForeColor = Color.Green;
-                lblDisponibilidad.Text = t.Translate("RegistrarVisita.msgHorarioDisponible");
+                lblDisponibilidad.Text = t.Translate("ProgramarVisita.msgHorarioDisponible");
             }
             else
             {
                 lblDisponibilidad.ForeColor = Color.DarkRed;
-                lblDisponibilidad.Text = t.Translate("RegistrarVisita.msgSuperposicion");
+                lblDisponibilidad.Text = t.Translate("ProgramarVisita.msgSuperposicion");
             }
 
             if (_ultimoIdVisita.HasValue)
             {
                 lblResultadoRegistro.ForeColor = Color.Green;
-                lblResultadoRegistro.Text = string.Format(t.Translate("RegistrarVisita.msgResultadoRegistro"), _ultimoIdVisita.Value);
+                lblResultadoRegistro.Text = string.Format(t.Translate("ProgramarVisita.msgResultadoRegistro"), _ultimoIdVisita.Value);
             }
             else
             {
@@ -376,21 +376,21 @@ namespace Servicios
         {
             var t = ServiceSessionManager577MC.getIntancia().Idioma;
 
-            this.Text = t.Translate("RegistrarVisita.formTitle");
-            lblTitulo.Text = t.Translate("RegistrarVisita.titulo");
-            gbCliente.Text = t.Translate("RegistrarVisita.gbCliente");
-            lblDNI.Text = t.Translate("RegistrarVisita.labelDNI");
-            btnBuscarCliente.Text = t.Translate("RegistrarVisita.btnBuscarCliente");
-            gbPropiedad.Text = t.Translate("RegistrarVisita.gbPropiedad");
-            btnSeleccionarPropiedad.Text = t.Translate("RegistrarVisita.btnSeleccionarPropiedad");
-            gbHorario.Text = t.Translate("RegistrarVisita.gbHorario");
-            lblFecha.Text = t.Translate("RegistrarVisita.labelFecha");
-            lblInicio.Text = t.Translate("RegistrarVisita.labelInicio");
-            lblFin.Text = t.Translate("RegistrarVisita.labelFin");
-            btnConfirmar.Text = t.Translate("RegistrarVisita.btnConfirmar");
-            btnLimpiar.Text = t.Translate("RegistrarVisita.btnLimpiar");
-            btnReporte.Text = t.Translate("RegistrarVisita.btnReporte");
-            btnConsultarDisponibilidad.Text = t.Translate("RegistrarVisita.btnConsultarDisponibilidad");
+            this.Text = t.Translate("ProgramarVisita.formTitle");
+            lblTitulo.Text = t.Translate("ProgramarVisita.titulo");
+            gbCliente.Text = t.Translate("ProgramarVisita.gbCliente");
+            lblDNI.Text = t.Translate("ProgramarVisita.labelDNI");
+            btnBuscarCliente.Text = t.Translate("ProgramarVisita.btnBuscarCliente");
+            gbPropiedad.Text = t.Translate("ProgramarVisita.gbPropiedad");
+            btnSeleccionarPropiedad.Text = t.Translate("ProgramarVisita.btnSeleccionarPropiedad");
+            gbHorario.Text = t.Translate("ProgramarVisita.gbHorario");
+            lblFecha.Text = t.Translate("ProgramarVisita.labelFecha");
+            lblInicio.Text = t.Translate("ProgramarVisita.labelInicio");
+            lblFin.Text = t.Translate("ProgramarVisita.labelFin");
+            btnConfirmar.Text = t.Translate("ProgramarVisita.btnConfirmar");
+            btnLimpiar.Text = t.Translate("ProgramarVisita.btnLimpiar");
+            btnReporte.Text = t.Translate("ProgramarVisita.btnReporte");
+            btnConsultarDisponibilidad.Text = t.Translate("ProgramarVisita.btnConsultarDisponibilidad");
 
             RefrescarLabelsInfo();
         }

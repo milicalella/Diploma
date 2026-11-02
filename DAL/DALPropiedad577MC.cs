@@ -20,6 +20,34 @@ namespace DAL
             return acceso.executeDataTable(query);
         }
 
+        public DataTable ObtenerPorId(int idPropiedad)
+        {
+            string query = @"SELECT Id, Direccion, Tipo, Estado, Precio, SuperficieM2, Ambientes, Dormitorios, Banios, DVH
+                             FROM Propiedad
+                             WHERE Id = @idPropiedad";
+
+            var parametros = new Dictionary<string, object>
+            {
+                { "@idPropiedad", idPropiedad }
+            };
+
+            return acceso.executeDataTable(query, parametros);
+        }
+
+        public bool ExistePropiedad(int idPropiedad)
+        {
+            string query = "SELECT 1 FROM Propiedad WHERE Id = @idPropiedad";
+
+            var parametros = new Dictionary<string, object>
+            {
+                { "@idPropiedad", idPropiedad }
+            };
+
+            DataTable dt = acceso.executeDataTable(query, parametros);
+
+            return dt.Rows.Count > 0;
+        }
+
         public DataTable Buscar(string direccion, string tipo, string estado, decimal? precioMin, decimal? precioMax)
         {
             var condiciones = new List<string>();
@@ -120,6 +148,22 @@ namespace DAL
                 { "@ambientes", ambientes },
                 { "@dormitorios", dormitorios },
                 { "@banios", banios },
+                { "@dvh", dvh }
+            };
+
+            return acceso.executeNonQuery(query, parametros);
+        }
+
+        public int ActualizarEstado(int id, string estado, long dvh)
+        {
+            string query = @"UPDATE Propiedad
+                             SET Estado = @estado, DVH = @dvh
+                             WHERE Id = @id";
+
+            var parametros = new Dictionary<string, object>
+            {
+                { "@id", id },
+                { "@estado", estado },
                 { "@dvh", dvh }
             };
 

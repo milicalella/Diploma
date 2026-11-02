@@ -59,7 +59,7 @@ namespace BLL
             return disponible;
         }
 
-        public int RegistrarVisita(Visita577MC visita)
+        public int ProgramarVisita(Visita577MC visita)
         {
             ValidarConsulta(visita.IdPropiedad, visita.Fecha, visita.HoraInicio, visita.HoraFin);
             ValidarDNICliente(visita.DNICliente);

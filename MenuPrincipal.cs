@@ -1,4 +1,4 @@
-using BE;
+﻿using BE;
 using BLL;
 using Services;
 using Services.Modelos;
@@ -88,10 +88,13 @@ namespace Servicios
             gestionRespaldoToolStripMenuItem.Enabled = ServiceSessionManager577MC.getIntancia().TienePermiso("Gestion Respaldo");
             clientesToolStripMenuItem.Enabled = ServiceSessionManager577MC.getIntancia().TienePermiso("Gestion Clientes") || ServiceSessionManager577MC.getIntancia().TienePermiso("Seleccionar Propiedad") || ServiceSessionManager577MC.getIntancia().TienePermiso("Agendar Visita") || ServiceSessionManager577MC.getIntancia().TienePermiso("Actualizar Estado Visita");
 
-            agendarVisitaToolStripMenuItem.Enabled = ServiceSessionManager577MC.getIntancia().TienePermiso("Agendar Visita");
+            programarVisitaToolStripMenuItem.Enabled = ServiceSessionManager577MC.getIntancia().TienePermiso("Agendar Visita");
             actualizarEstadoVisitaToolStripMenuItem.Enabled = ServiceSessionManager577MC.getIntancia().TienePermiso("Actualizar Estado Visita");
             abmClientesToolStripMenuItem.Enabled = ServiceSessionManager577MC.getIntancia().TienePermiso("Gestion Clientes");
             abmPropiedadesToolStripMenuItem.Enabled = ServiceSessionManager577MC.getIntancia().TienePermiso("Seleccionar Propiedad");
+            generarContratoToolStripMenuItem.Enabled = ServiceSessionManager577MC.getIntancia().TienePermiso("Gestion Clientes") || ServiceSessionManager577MC.getIntancia().TienePermiso("Seleccionar Propiedad");
+            actualizarEstadoContratoToolStripMenuItem.Enabled = ServiceSessionManager577MC.getIntancia().TienePermiso("Gestion Clientes") || ServiceSessionManager577MC.getIntancia().TienePermiso("Seleccionar Propiedad");
+            reimprimirContratoToolStripMenuItem.Enabled = ServiceSessionManager577MC.getIntancia().TienePermiso("Gestion Clientes") || ServiceSessionManager577MC.getIntancia().TienePermiso("Seleccionar Propiedad");
         }
 
         private void cambiarClaveToolStripMenuItem_Click(object sender, EventArgs e)
@@ -163,11 +166,14 @@ namespace Servicios
             clientesToolStripMenuItem.Text = t.Translate("MenuPrincipal.menuClientes");
             //registrarClienteToolStripMenuItem.Text = t.Translate("MenuPrincipal.menuRegistrarCliente");
             //seleccionarPropiedadToolStripMenuItem.Text = t.Translate("MenuPrincipal.menuSeleccionarPropiedad");
-            agendarVisitaToolStripMenuItem.Text = t.Translate("MenuPrincipal.menuAgendarVisita");
+            programarVisitaToolStripMenuItem.Text = t.Translate("MenuPrincipal.menuProgramarVisita");
             actualizarEstadoVisitaToolStripMenuItem.Text = t.Translate("MenuPrincipal.menuActualizarEstadoVisita");
             maestrosToolStripMenuItem.Text = t.Translate("MenuPrincipal.menuMaestros");
             abmClientesToolStripMenuItem.Text = t.Translate("MenuPrincipal.menuAbmClientes");
             abmPropiedadesToolStripMenuItem.Text = t.Translate("MenuPrincipal.menuAbmPropiedades");
+            generarContratoToolStripMenuItem.Text = t.Translate("MenuPrincipal.menuGenerarContrato");
+            actualizarEstadoContratoToolStripMenuItem.Text = t.Translate("MenuPrincipal.menuActualizarEstadoContrato");
+            reimprimirContratoToolStripMenuItem.Text = t.Translate("MenuPrincipal.menuReimprimirContrato");
         }
 
         private void gestionFamiliaToolStripMenuItem_Click(object sender, EventArgs e)
@@ -218,7 +224,7 @@ namespace Servicios
             form.Show();
         }
 
-        private void agendarVisitaToolStripMenuItem_Click(object sender, EventArgs e)
+        private void programarVisitaToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var t = ServiceSessionManager577MC.getIntancia().Idioma;
 
@@ -228,7 +234,7 @@ namespace Servicios
                 return;
             }
 
-            RegistrarVisita form = new RegistrarVisita();
+            ProgramarVisita form = new ProgramarVisita();
             form.Show();
         }
 
@@ -277,6 +283,45 @@ namespace Servicios
         private void clientesToolStripMenuItem_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void generarContratoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!ServiceSessionManager577MC.getIntancia().TienePermiso("Gestion Clientes") &&
+                !ServiceSessionManager577MC.getIntancia().TienePermiso("Seleccionar Propiedad"))
+            {
+                MessageBox.Show("No tiene permiso para generar contratos.", "Acceso denegado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            FrmGenerarContrato form = new FrmGenerarContrato();
+            form.Show();
+        }
+
+        private void actualizarEstadoContratoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!ServiceSessionManager577MC.getIntancia().TienePermiso("Gestion Clientes") &&
+                !ServiceSessionManager577MC.getIntancia().TienePermiso("Seleccionar Propiedad"))
+            {
+                MessageBox.Show("No tiene permiso para actualizar el estado de contratos.", "Acceso denegado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            FrmActualizarEstadoPropiedadContrato form = new FrmActualizarEstadoPropiedadContrato();
+            form.Show();
+        }
+
+        private void reimprimirContratoToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (!ServiceSessionManager577MC.getIntancia().TienePermiso("Gestion Clientes") &&
+                !ServiceSessionManager577MC.getIntancia().TienePermiso("Seleccionar Propiedad"))
+            {
+                MessageBox.Show("No tiene permiso para reimprimir copias finales de contratos.", "Acceso denegado", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            FrmReimprimirContrato form = new FrmReimprimirContrato();
+            form.Show();
         }
     }
 }
