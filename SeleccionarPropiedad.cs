@@ -28,6 +28,7 @@ namespace Servicios
         int? _cantidadResultados;
 
         private readonly bool _modoAbm;
+        private readonly bool _soloOperables;
         private int? _idSeleccionado;
         private string _dirFiltro;
         private string _tipoFiltro;
@@ -37,9 +38,10 @@ namespace Servicios
 
         public Propiedad577MC PropiedadSeleccionada { get; private set; }
 
-        public SeleccionarPropiedad(bool modoAbm = false)
+        public SeleccionarPropiedad(bool modoAbm = false, bool soloOperables = false)
         {
             _modoAbm = modoAbm;
+            _soloOperables = soloOperables;
             InitializeComponent();
 
             ServiceSessionManager577MC.getIntancia().Idioma.Suscribir(this);
@@ -71,7 +73,7 @@ namespace Servicios
         {
             try
             {
-                CargarCatalogo(_propiedadBLL.ObtenerTodas());
+                CargarCatalogoInicial();
             }
             catch (Exception ex)
             {
@@ -103,7 +105,38 @@ namespace Servicios
         private void AplicarFiltro()
         {
             List<Propiedad577MC> resultado = _propiedadBLL.Buscar(_dirFiltro, _tipoFiltro, _estadoFiltro, _precioMinFiltro, _precioMaxFiltro);
+
+            if (_soloOperables)
+            {
+                resultado = FiltrarOperables(resultado);
+            }
+
             CargarCatalogo(resultado);
+        }
+
+        private void CargarCatalogoInicial()
+        {
+            List<Propiedad577MC> propiedades = _propiedadBLL.ObtenerTodas();
+
+            if (_soloOperables)
+            {
+                propiedades = FiltrarOperables(propiedades);
+            }
+
+            CargarCatalogo(propiedades);
+        }
+
+        private static List<Propiedad577MC> FiltrarOperables(List<Propiedad577MC> propiedades)
+        {
+            return propiedades
+                .Where(p => EsEstadoOperable(p.Estado))
+                .ToList();
+        }
+
+        private static bool EsEstadoOperable(string estado)
+        {
+            return string.Equals(estado, "Disponible", StringComparison.OrdinalIgnoreCase)
+                || string.Equals(estado, "Reservada", StringComparison.OrdinalIgnoreCase);
         }
 
         private void btnLimpiar_Click(object sender, EventArgs e)
@@ -120,7 +153,7 @@ namespace Servicios
             _precioMinFiltro = null;
             _precioMaxFiltro = null;
 
-            CargarCatalogo(_propiedadBLL.ObtenerTodas());
+            CargarCatalogoInicial();
         }
 
         private void btnSeleccionar_Click(object sender, EventArgs e)
@@ -209,6 +242,12 @@ namespace Servicios
 
             if (propiedad != null)
             {
+                if (_soloOperables && !EsEstadoOperable(propiedad.Estado))
+                {
+                    MessageBox.Show(t.Translate("SeleccionarPropiedad.msgNoOperable"), t.Translate("SeleccionarPropiedad.title"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
                 PropiedadSeleccionada = propiedad;
                 this.DialogResult = DialogResult.OK;
                 this.Close();
@@ -236,13 +275,20 @@ namespace Servicios
             SeleccionarItemPorValor(cboTipo, tipoActual);
 
             string estadoActual = ValorSeleccionado(cboEstado);
-            cboEstado.DataSource = new BindingList<ItemCombo>(new[]
+            List<ItemCombo> estados = new List<ItemCombo>
             {
-                new ItemCombo { Display = t.Translate("EstadoPropiedad.Disponible"), Valor = "Disponible" },
-                new ItemCombo { Display = t.Translate("EstadoPropiedad.Vendida"), Valor = "Vendida" },
-                new ItemCombo { Display = t.Translate("EstadoPropiedad.Alquilada"), Valor = "Alquilada" },
-                new ItemCombo { Display = t.Translate("EstadoPropiedad.Reservada"), Valor = "Reservada" }
-            }.ToList());
+                new ItemCombo { Display = t.Translate("EstadoPropiedad.Disponible"), Valor = "Disponible" }
+            };
+
+            if (!_soloOperables)
+            {
+                estados.Add(new ItemCombo { Display = t.Translate("EstadoPropiedad.Vendida"), Valor = "Vendida" });
+                estados.Add(new ItemCombo { Display = t.Translate("EstadoPropiedad.Alquilada"), Valor = "Alquilada" });
+            }
+
+            estados.Add(new ItemCombo { Display = t.Translate("EstadoPropiedad.Reservada"), Valor = "Reservada" });
+
+            cboEstado.DataSource = new BindingList<ItemCombo>(estados);
             cboEstado.DisplayMember = "Display";
             cboEstado.ValueMember = "Valor";
             SeleccionarItemPorValor(cboEstado, estadoActual);

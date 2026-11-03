@@ -41,12 +41,22 @@ namespace Servicios
         {
             try
             {
-                using (SeleccionarPropiedad formSel = new SeleccionarPropiedad())
+                using (SeleccionarPropiedad formSel = new SeleccionarPropiedad(soloOperables: true))
                 {
                     if (formSel.ShowDialog(this) == DialogResult.OK && formSel.PropiedadSeleccionada != null)
                     {
                         _propiedadSeleccionada = formSel.PropiedadSeleccionada;
                         MostrarPropiedad(_propiedadSeleccionada);
+
+                        try
+                        {
+                            _contratoBLL.ValidarOperabilidadPropiedad(_propiedadSeleccionada.Id);
+                        }
+                        catch
+                        {
+                            LimpiarPropiedad();
+                            throw;
+                        }
                     }
                 }
             }
@@ -223,6 +233,14 @@ namespace Servicios
                     return;
                 }
 
+                if (_propiedadSeleccionada == null)
+                {
+                    MessageBox.Show("Debe seleccionar una propiedad válida.", "Generar Contrato", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
+
+                _contratoBLL.ValidarOperabilidadPropiedad(_propiedadSeleccionada.Id);
+
                 if (!AsegurarCliente(txtDNIPropietario, "propietario"))
                 {
                     return;
@@ -235,12 +253,6 @@ namespace Servicios
 
                 dniPropietario = txtDNIPropietario.Text.Trim();
                 dniCliente = txtDNICliente.Text.Trim();
-
-                if (_propiedadSeleccionada == null)
-                {
-                    MessageBox.Show("Debe seleccionar una propiedad válida.", "Generar Contrato", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
 
                 if (_terminos == null)
                 {

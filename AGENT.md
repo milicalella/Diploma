@@ -1,7 +1,7 @@
 # AGENT.md — Guía de trabajo para agentes de IA
 
 > Base de conocimiento del sistema **Servicios / GUI_577MC** (gestión inmobiliaria, WinForms .NET Framework 4.7.2 + SQL Server).
-> Última actualización: 2026-10-30 (estado real de la base, verificación final de RN1/RN2 y pendiente de la regla de operabilidad RF2).
+> Última actualización: 2026-11-02 (regla de operabilidad RF2 implementada: no se generan contratos sobre propiedades no operables ni duplicados pendientes).
 
 ## 1. Qué es este repositorio
 
@@ -86,7 +86,7 @@ Aplicación de escritorio WinForms para administrar clientes, propiedades, visit
 - ¿La autorización debe validarse también dentro de cada formulario o alcanza con el menú?
 - ¿Se normaliza el encoding de archivos con caracteres corruptos (`A3`, `A±`, etc.)?
 - ¿Se agrega un acceso directo para abrir la carpeta de descargas o el PDF recién generado? Hoy se informa la ruta y se abre la vista previa, pero no se lanza el visor externo.
-- ¿Se implementa la **regla de operabilidad RF2** (generar contratos solo sobre propiedades `Disponible`/`Reservada`)? **Acordado el 2026-10-30**: sí; falta implementarlo (sección 12).
+- ~~¿Se implementa la **regla de operabilidad RF2** (generar contratos solo sobre propiedades `Disponible`/`Reservada`)?~~ **Resuelto el 2026-11-02:** implementada (sección 12).
 - ¿Se agrega **Matrícula Dominial** a `Propiedad`? El RF2 la pide, pero hoy no existe en el esquema ni en el selector (sección 12).
 
 ## 7. CUN06 — Generar contrato (implementado y verificado 2026-10-28)
@@ -362,21 +362,21 @@ Aplicada a CUN06/CUN07/CUN08 y **obligatoria para los próximos casos de uso**:
 
 - Propiedad 10 — Calle 9 de Julio 820: `Disponible` (única operable al 2026-10-30).
 - `MaxBit = 648`; `DVV Contrato = -643719723159986574`; la suma de los `DVH` de los 5 contratos coincide con el DVV (verificado con aritmética de 64 bits).
-- `C-20261028-0004` queda `Pendiente` por decisión del usuario. Intentar firmarlo devuelve `La propiedad ya se encuentra en estado 'Vendida'; no se puede firmar el contrato.` No bloquea otras propiedades ni la reimpresión.
+- `C-20261028-0004` queda `Pendiente` por decisión del usuario. Intentar firmarlo devuelve `No se puede firmar el contrato C-20261028-0004: la propiedad 11 - 'Boulevard Haedo 300' se encuentra en estado 'Vendida'. Solo se puede firmar sobre una propiedad 'Disponible' o 'Reservada'.` No bloquea otras propiedades ni la reimpresión.
 
-### Pendiente: regla de operabilidad RF2
+### Implementada: regla de operabilidad RF2 (2026-11-02)
 
-**Situación detectada:** `SeleccionarPropiedad` en modo selección carga todas las propiedades (`ObtenerTodas`, `SeleccionarPropiedad.cs:74`) y `BLLContrato577MC.ValidarContrato` no valida el estado antes del INSERT. Por eso se pueden generar contratos `Pendiente` sobre propiedades `Vendida`/`Alquilada` que después no se pueden firmar: `FirmarContrato` exige `Disponible`/`Reservada` (`BLLContrato577MC.cs:121-126`) y el DAL lo revalida en la transacción (`DALContrato577MC.cs:162-167`).
+**Situación detectada (2026-10-30):** `SeleccionarPropiedad` en modo selección cargaba todas las propiedades (`ObtenerTodas`) y `BLLContrato577MC.ValidarContrato` no validaba el estado antes del INSERT. Por eso se podían generar contratos `Pendiente` sobre propiedades `Vendida`/`Alquilada` que después no se podían firmar.
 
-**Decisión acordada (2026-10-30):** mantener la regla de firma y agregar operabilidad en origen.
+**Regla vigente:** solo se genera un contrato si la propiedad está `Disponible` o `Reservada` **y** no tiene otro contrato `Pendiente`.
 
-1. `SeleccionarPropiedad` con flag `soloOperables` (por defecto `false`): en modo selección para contrato muestra solo `Disponible`/`Reservada`; el ABM y el selector de visitas conservan todas.
-2. `FrmGenerarContrato` abre el selector con ese flag.
-3. `BLLContrato577MC.ValidarContrato` relee la propiedad y rechaza la generación si no es operable, con código, dirección y estado en el mensaje.
-4. `FirmarContrato` mejora el mensaje de rechazo con NroContrato, propiedad, dirección y estado.
-5. Sin cambios de esquema ni de DVH/DVV; no se permite firmar dos veces la misma propiedad.
+1. `SeleccionarPropiedad(bool modoAbm = false, bool soloOperables = false)`: con `soloOperables = true` el catálogo, el filtro de estado y la validación de selección quedan limitados a `Disponible`/`Reservada`. El ABM (`modoAbm`) y el selector de visitas conservan el catálogo completo.
+2. `FrmGenerarContrato` abre el selector con `soloOperables: true`, revalida al seleccionar y limpia la selección si la propiedad deja de ser operable.
+3. `BLLContrato577MC.ValidarOperabilidadPropiedad(int)` relee la propiedad y rechaza la generación si no es operable o si `DALContrato577MC.ObtenerContratoPendiente(id)` devuelve un contrato pendiente. Se invoca desde `ValidarContrato` y desde `FrmGenerarContrato.btnGenerarContrato_Click` antes de registrar clientes.
+4. `FirmarContrato` acepta `Disponible`/`Reservada` (`EsEstadoOperable`) y el mensaje de rechazo incluye `NroContrato`, propiedad, dirección y estado.
+5. Sin cambios de esquema ni de DVH/DVV.
 
-**Estado:** no implementado. Es la próxima tarea acordada.
+**Estado:** implementado y compilado el 2026-11-02 (`Servicios.exe`, solo `CS2002`).
 
 ### Gap RF2: Matrícula Dominial
 

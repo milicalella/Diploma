@@ -229,17 +229,18 @@
 **Decisión (2026-10-30):** mantener la regla de firma existente y agregar operabilidad en origen. No se relaja la validación para "poder firmar" contratos heredados.
 
 1. `SeleccionarPropiedad` recibe el flag `soloOperables` (por defecto `false`); en modo selección para contratos muestra solo `Disponible`/`Reservada`. El ABM y el selector de visitas conservan el catálogo completo.
-2. `FrmGenerarContrato` abre el selector con ese flag.
-3. `BLLContrato577MC.ValidarContrato` relee la propiedad y rechaza la generación si no es operable, informando código, dirección y estado.
-4. `FirmarContrato` mejora el mensaje de rechazo con `NroContrato`, propiedad, dirección y estado.
+2. `FrmGenerarContrato` abre el selector con ese flag y revalida al seleccionar y antes de generar.
+3. `BLLContrato577MC.ValidarOperabilidadPropiedad` relee la propiedad y rechaza la generación si no es operable, informando código, dirección y estado.
+4. `FirmarContrato` mejora el mensaje de rechazo con `NroContrato`, propiedad, dirección y estado, y acepta `Disponible`/`Reservada` mediante `EsEstadoOperable`.
 5. Sin cambios de esquema ni de DVH/DVV.
+6. **Agregado 2026-11-02:** también se rechaza la generación si la propiedad ya tiene otro contrato `Pendiente` (`DALContrato577MC.ObtenerContratoPendiente`), para no dejar dos borradores activos sobre la misma propiedad.
 
 **Evidencia:** lectura de `SeleccionarPropiedad.cs:74`, `BLLContrato577MC.cs:121-126`, `DALContrato577MC.cs:162-167` y de la base al 2026-10-30 (5 contratos, propiedad 11 `Vendida`, `C-20261028-0004` `Pendiente`).
 
 **Consecuencias:**
 - `C-20261028-0004` queda `Pendiente` y no se puede firmar mientras la propiedad 11 siga `Vendida`; es una decisión del usuario, no un defecto a corregir por datos.
 - El gap del RF2 sobre **Matrícula Dominial** queda separado: requiere cambio de esquema y de DVH, y no forma parte de esta decisión.
-- **Estado: no implementado.** Registrado como KI-25 y como próxima tarea en `AGENT.md`, sección 12.
+- **Estado: implementado el 2026-11-02** (KI-25 resuelto). Build Debug sin errores; solo `CS2002`.
 
 ---
 
@@ -257,5 +258,5 @@
 | PD-08 | Transacciones | a) agregar helper; b) mantener operaciones sueltas | consistencia |
 | PD-09 | Hash de contraseñas | a) migrar a PBKDF2/bcrypt; b) mantener SHA-256 | seguridad |
 | PD-10 | Proyecto de despliegue | a) eliminar referencia; b) recrear `.vdproj` | instalador |
-| PD-11 | ~~¿Se filtra la generación de contratos por estado de propiedad?~~ | **Resuelto (ADR-015):** flag `soloOperables` + validación en BLL; pendiente de implementar | integridad de contratos |
+| PD-11 | ~~¿Se filtra la generación de contratos por estado de propiedad?~~ | **Resuelto (ADR-015):** flag `soloOperables` + validación en BLL, implementado el 2026-11-02 | integridad de contratos |
 | PD-12 | Matrícula Dominial en `Propiedad` | a) agregar columna + DVH; b) dejar el RF2 sin ese campo | esquema y DVH |

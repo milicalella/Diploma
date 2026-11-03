@@ -20,7 +20,7 @@
 | `CambiarContraseña` | `CambiarContraseña.cs`, ... | Cambio de clave | `btnAceptar_Click` (40); nombre de archivo con encoding corrupto |
 | `Configuracion_Inicial` | `Configuracion Inicial.cs`, ... | Asistente de conexión/creación de BD | `ConstruirConnectionStringDesdeFormulario` (48), `ProbarConexion_Click` (70), `btnGuardarYContinuar_Click` (108); no referencia `IIdiomaObserver` |
 | `RegistrarCliente` | `RegistrarCliente.cs`, ... | ABM de clientes + serialización XML | Constructor ABM (25) y constructor modal con DNI (38); guardar (55), modificar (106), eliminar (148), serializar (250), deserializar (315) |
-| `SeleccionarPropiedad` | `SeleccionarPropiedad.cs`, ... | Catálogo, búsqueda, selección y ABM de propiedades | Constructor con modo selección/ABM; `Seleccionar()` (194), `CargarABM` (282), `btnGuardarProp_Click` (374), `btnEliminarProp_Click` (437) |
+| `SeleccionarPropiedad` | `SeleccionarPropiedad.cs`, ... | Catálogo, búsqueda, selección y ABM de propiedades | Constructor `(modoAbm, soloOperables)`; `Seleccionar()` (194), `CargarABM` (282), `btnGuardarProp_Click` (374), `btnEliminarProp_Click` (437) |
 | `ProgramarVisita` | `ProgramarVisita.cs`, ... | Programar visita, consultar disponibilidad, emitir comprobante | `BuscarOCrearCliente` (65), `AbrirAltaCliente` (87), `btnConfirmar_Click` (149), `ProgramarVisita` (188), `MostrarComprobanteRN1` (231) |
 | `ActualizarEstadoVisita` | `ActualizarEstadoVisita.cs`, ... | Buscar visitas y cambiar estado/observaciones | `btnBuscar_Click` (52), `btnGuardar_Click` (105), `VisitaSeleccionada` (131), `CargarConFiltro` (148) |
 | `ConsultarDisponibilidad` | `ConsultarDisponibilidad.cs`, ... | Diálogo de consulta de disponibilidad | **Nuevo/untracked**; `btnConsultar_Click` (64), `MostrarResultado` (106), `btnAceptar_Click` (141) |
@@ -30,7 +30,7 @@
 | `AuditoriaBitacora` | `AuditoriaBitacora.cs`, ... | Consulta/filtro de bitácora e impresión | `CargarGrillaInicial` (37), `btnFiltrar_Click` (68), `printDoc_PrintPage` (99), `btnPDF_Click` (194; abre `PrintDialog` y manda a imprimir, no genera PDF) |
 | `GestionRespaldo` | `GestionRespaldo.cs`, ... | Backup y restore desde UI | `btnRealizarBackUp_Click`, `btnRealizarRestore_Click`; `Application.Restart()` tras restore |
 | `RepararInconsistencias` | `RepararInconsistencias.cs`, ... | Recalcular DVH/DVV o restaurar backup | `btnRecalcular_Click`, `btnRestore_Click`; recibe flags por constructor |
-| `FrmGenerarContrato` | `FrmGenerarContrato.cs`, ... | Generar contrato (CUN06) | **Untracked**; valida DNI/cliente, elige propiedad y términos; llama a `BLLContrato577MC.ValidarYGenerarContrato` |
+| `FrmGenerarContrato` | `FrmGenerarContrato.cs`, ... | Generar contrato (CUN06) | **Untracked**; valida DNI/cliente, elige propiedad operable (`soloOperables`) y términos; valida con `BLLContrato577MC.ValidarOperabilidadPropiedad` y llama a `ValidarYGenerarContrato` |
 | `FrmRegistrarTerminosCondiciones` | `FrmRegistrarTerminosCondiciones.cs`, ... | Modal de términos (CUN07) | Solo `Venta`/`Alquiler`; valida con `BLLContrato577MC.ValidarTerminos`; no persiste |
 | `FrmActualizarEstadoPropiedadContrato` | `FrmActualizarEstadoPropiedadContrato.cs`, ... | Actualizar estado de contrato y propiedad (CUN08) | Grilla `Pendiente`, combo `Firmado`/`Cancelado`; al firmar emite RN2 y previsualiza |
 | `FrmReimprimirContrato` | `FrmReimprimirContrato.cs`, ... | Reimprimir copia final | Grilla de contratos `Firmado`; botón/doble clic generan `ReporteRN2577MC.Emitir(contrato, false)` |
@@ -77,7 +77,7 @@
 | `DALIdioma577MC.cs` | `obtenerTodos` (14) |
 | `DALDigitoVerificador577MC.cs` | `GuardarDVV` (16), `ActualizarDVV` (30), `ExisteTabla` (42), `ObtenerFila` (55), `ObtenerDatosVerificacion` (68) |
 | `DALBackUpRestore577MC.cs` | `realizarBackUp` (18), `realizarRestore` (32); instancia hardcodeada (15) |
-| `DALContrato577MC.cs` | **Nuevo/untracked**: `ExisteContrato`, `ObtenerSiguienteSecuencial`, `InsertarContrato`, `ObtenerPorNro`, `ObtenerTodos`, `ObtenerPendientes`, `ObtenerFirmados`, `ActualizarEstado`, `ActualizarEstadoConPropiedad` (transacción SQL), `ActualizarDVH`; la tabla `Contrato` existe en la base pero no en los scripts |
+| `DALContrato577MC.cs` | **Nuevo/untracked**: `ExisteContrato`, `ObtenerSiguienteSecuencial`, `InsertarContrato`, `ObtenerPorNro`, `ObtenerTodos`, `ObtenerPendientes`, `ObtenerContratoPendiente` (valida duplicados por propiedad), `ObtenerFirmados`, `ActualizarEstado`, `ActualizarEstadoConPropiedad` (transacción SQL), `ActualizarDVH`; la tabla `Contrato` existe en la base pero no en los scripts |
 
 ## 4. BLL (`BLL_577MC.csproj`, assembly `BLL`)
 
@@ -86,7 +86,7 @@
 | `BLLUsuario577MC.cs` | `obtenerTodos` (21), `login` (34), `CrearUsuario` (121), `activarDesactivar` (153), `ModificarUsuario` (179), `cambiarPassword` (189), `MapearUsuario` (217), `DesbloquearUsuario` (242), `GuardarIdioma` (274), `CalcularDVHUsuario` (283), `RecalcularDVHUsuario` (307), `RepararDVH` (329), `GenerarUsuario` (335), `GenerarPassword` (340) |
 | `BLLCliente577MC.cs` | `ExisteCliente` (25), `ObtenerTodos` (35), `ObtenerPorDNI` (56), `ModificarCliente` (80), `EliminarCliente` (100), `RegistrarCliente` (123) |
 | `BLLPropiedad577MC.cs` | `ObtenerTodas`, `ObtenerPorId`, `TieneVisitas`, `RegistrarPropiedad`, `ModificarPropiedad`, `EliminarPropiedad`, `Buscar`; DVH centralizado en `Services.DigitoVerificador577MC` |
-| `BLLContrato577MC.cs` | **Nuevo/untracked**: `ClienteExiste`, `PropiedadExiste`, `ObtenerContratosPendientes`, `ObtenerContratosFirmados`, `ValidarTerminos`, `ValidarYGenerarContrato`, `ActualizarEstadoContrato`, `FirmarContrato`, `CancelarContrato`, mapeos y bitácora |
+| `BLLContrato577MC.cs` | **Nuevo/untracked**: `ClienteExiste`, `PropiedadExiste`, `ValidarOperabilidadPropiedad` (estado operable y sin contrato `Pendiente`), `ObtenerContratosPendientes`, `ObtenerContratosFirmados`, `ValidarTerminos`, `ValidarYGenerarContrato`, `ActualizarEstadoContrato`, `FirmarContrato`, `CancelarContrato`, mapeos y bitácora |
 | `BLLVisita577MC.cs` | `ObtenerVisitasPorPropiedadYFecha` (28), `ObtenerVisitas` (34), `ConsultarDisponibilidad` (52), `ProgramarVisita` (62), `ActualizarEstadoVisita` (83) |
 | `BLLRol577MC.cs` | `obtenerTodos` (19), `ObtenerRolesConJerarquia` (37), `crearRol` (73), `AsignarPatente` (141), `AsignarFamilia` (158), `EliminarRol` (184), `DesasignarPatente` (201), `DesasignarFamilia` (206) |
 | `BLLFamilia577MC.cs` | `ObtenerTodos` (18), `CrearFamilia` (33), `AsignarPatente` (99), `AsignarFamilia` (136), `EliminarFamilia` (185) |

@@ -101,6 +101,23 @@ namespace DAL
             return acceso.executeDataTable(query);
         }
 
+        public string ObtenerContratoPendiente(int idPropiedad)
+        {
+            string query = @"SELECT TOP 1 NroContrato
+                             FROM Contrato
+                             WHERE CodigoPropiedad = @idPropiedad AND Estado = 'Pendiente'
+                             ORDER BY FechaEmision DESC, NroContrato DESC";
+
+            var parametros = new Dictionary<string, object>
+            {
+                { "@idPropiedad", idPropiedad }
+            };
+
+            object resultado = acceso.executeScalar(query, parametros);
+
+            return resultado == null || resultado == DBNull.Value ? null : resultado.ToString();
+        }
+
         public DataTable ObtenerPendientes()
         {
             string query = @"SELECT c.NroContrato, c.FechaEmision, c.DNIPropietario, c.DNICliente, c.CodigoPropiedad,

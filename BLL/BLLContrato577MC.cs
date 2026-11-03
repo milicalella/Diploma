@@ -42,6 +42,43 @@ namespace BLL
             return _dalPropiedad.ExistePropiedad(idPropiedad);
         }
 
+        public void ValidarOperabilidadPropiedad(int idPropiedad)
+        {
+            if (idPropiedad <= 0)
+            {
+                throw new Exception("Debe seleccionar una propiedad válida.");
+            }
+
+            Propiedad577MC propiedad = ObtenerPropiedad(idPropiedad);
+
+            if (propiedad == null)
+            {
+                throw new Exception("La propiedad seleccionada no existe.");
+            }
+
+            string estado = (propiedad.Estado ?? string.Empty).Trim();
+
+            if (!EsEstadoOperable(estado))
+            {
+                throw new Exception(string.Format(
+                    "La propiedad {0} - '{1}' se encuentra en estado '{2}'. Solo se puede generar un contrato para propiedades en estado 'Disponible' o 'Reservada'.",
+                    propiedad.Id,
+                    propiedad.Direccion,
+                    estado));
+            }
+
+            string contratoPendiente = _dalContrato.ObtenerContratoPendiente(propiedad.Id);
+
+            if (!string.IsNullOrWhiteSpace(contratoPendiente))
+            {
+                throw new Exception(string.Format(
+                    "La propiedad {0} - '{1}' ya tiene un contrato pendiente ({2}). Debe firmarse o cancelarse antes de generar uno nuevo.",
+                    propiedad.Id,
+                    propiedad.Direccion,
+                    contratoPendiente));
+            }
+        }
+
         public List<Contrato577MC> ObtenerContratosPendientes()
         {
             return MapearContratos(_dalContrato.ObtenerPendientes());
@@ -121,7 +158,10 @@ namespace BLL
             if (!EsEstadoFirmable(propiedad.Estado))
             {
                 throw new Exception(string.Format(
-                    "La propiedad ya se encuentra en estado '{0}'; no se puede firmar el contrato.",
+                    "No se puede firmar el contrato {0}: la propiedad {1} - '{2}' se encuentra en estado '{3}'. Solo se puede firmar sobre una propiedad 'Disponible' o 'Reservada'.",
+                    contrato.NroContrato,
+                    propiedad.Id,
+                    propiedad.Direccion,
                     propiedad.Estado));
             }
 
@@ -243,6 +283,11 @@ namespace BLL
         }
 
         private bool EsEstadoFirmable(string estado)
+        {
+            return EsEstadoOperable(estado);
+        }
+
+        private bool EsEstadoOperable(string estado)
         {
             return string.Equals(estado, "Disponible", StringComparison.OrdinalIgnoreCase)
                 || string.Equals(estado, "Reservada", StringComparison.OrdinalIgnoreCase);
@@ -444,10 +489,7 @@ namespace BLL
                 throw new Exception("Debe seleccionar una propiedad válida.");
             }
 
-            if (!PropiedadExiste(contrato.CodigoPropiedad))
-            {
-                throw new Exception("La propiedad seleccionada no existe.");
-            }
+            ValidarOperabilidadPropiedad(contrato.CodigoPropiedad);
 
             TerminosContrato577MC terminos = new TerminosContrato577MC
             {

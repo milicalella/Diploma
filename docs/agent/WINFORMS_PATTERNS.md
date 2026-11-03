@@ -72,7 +72,7 @@ using (SeleccionarPropiedad form = new SeleccionarPropiedad())
 ```
 
 - `ProgramarVisita.btnSeleccionarPropiedad_Click` (`ProgramarVisita.cs:128`).
-- `FrmGenerarContrato.btnSeleccionarPropiedad_Click` usa `new SeleccionarPropiedad(false)`. **Pendiente (2026-10-30):** agregar el flag `soloOperables` para mostrar solo propiedades `Disponible`/`Reservada` al generar contratos (`AGENT.md`, sección 12).
+- `FrmGenerarContrato.btnSeleccionarPropiedad_Click` usa `new SeleccionarPropiedad(soloOperables: true)`, revalida con `BLLContrato577MC.ValidarOperabilidadPropiedad` al seleccionar (limpia la selección si deja de ser operable) y vuelve a validar antes de generar.
 - `ProgramarVisita.AbrirAltaCliente` (`líneas 87-105`) abre `RegistrarCliente(dni)` en modo modal y lee `ClienteRegistrado`.
 - `ProgramarVisita.btnConsultarDisponibilidad_Click` abre `ConsultarDisponibilidad(_propiedad)` y copia fecha/horas/disponibilidad.
 
@@ -86,10 +86,10 @@ using (SeleccionarPropiedad form = new SeleccionarPropiedad())
 
 `SeleccionarPropiedad`:
 
-- Constructor `SeleccionarPropiedad(bool modoAbm = false)`.
+- Constructor `SeleccionarPropiedad(bool modoAbm = false, bool soloOperables = false)`.
 - Modo `false`: catálogo + filtros + botón Seleccionar; formulario compacto.
 - Modo `true`: muestra `gbABM`, oculta Seleccionar y carga combos de ABM (`SeleccionarPropiedad.cs:41-67`).
-- **Pendiente (2026-10-30):** agregar `soloOperables` para que el modo selección de contratos filtre `Disponible`/`Reservada`; ABM y visitas conservan el catálogo completo.
+- `soloOperables = true` (usado por CUN06): el catálogo, el filtro de estado y la selección quedan limitados a `Disponible`/`Reservada`; al limpiar filtros se vuelve a ese subconjunto. ABM y visitas conservan el catálogo completo.
 
 `ConsultarDisponibilidad`:
 

@@ -286,6 +286,7 @@
     "SeleccionarPropiedad.minimo": "minimum",
     "SeleccionarPropiedad.maximo": "maximum",
     "SeleccionarPropiedad.msgDebeSeleccionar": "You must select a property from the list.",
+    "SeleccionarPropiedad.msgNoOperable": "Only properties in 'Available' or 'Reserved' status can be selected.",
     "SeleccionarPropiedad.gbABM": "Create / Delete / Edit",
     "SeleccionarPropiedad.labelPrecio": "Price",
     "SeleccionarPropiedad.labelSuperficie": "Area (sq m)",

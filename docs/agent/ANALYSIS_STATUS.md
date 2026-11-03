@@ -3,6 +3,8 @@
 > **Actualización 2026-10-28 (post-auditoría).** Este documento conserva la auditoría inicial. Desde entonces se implementaron y verificaron CUN06, CUN07, CUN08, los reportes RN1/RN2 y la reimpresión de copia final. La solución **compila** (`bin\Debug\Servicios.exe`), la tabla `Contrato` existe en la base y se probaron los flujos contra SQL Server. Para el estado vigente, la fuente principal es `AGENT.md`; las secciones 3 a 9 de este archivo describen el estado histórico de la auditoría.
 >
 > **Actualización 2026-10-30.** Build Debug repetido (genera `Servicios.exe`, solo `CS2002`) y estado de datos verificado por lectura: 5 contratos (`0001`/`0002`/`0005` `Firmado`, `0003` `Cancelado`, `0004` `Pendiente`), propiedades 9 y 14 `Alquilada`, 11 `Vendida`, 10 `Disponible`, `MaxBit = 648` y `DVV Contrato = -643719723159986574` (coincide con la suma de los `DVH`). **Pendiente acordado:** regla de operabilidad RF2 (KI-25, ADR-015) y gap de Matrícula Dominial; ver `AGENT.md`, sección 12. No se modificaron datos.
+>
+> **Actualización 2026-11-02.** Implementada la regla de operabilidad RF2 (KI-25/ADR-015): no se generan contratos sobre propiedades `Vendida`/`Alquilada` ni sobre una propiedad con otro contrato `Pendiente`. Build Debug correcto (solo `CS2002`). Sin cambios de esquema ni de datos.
 
 ## 1. Alcance
 
@@ -133,7 +135,7 @@ Archivos que **no deben modificarse sin autorización**:
 8. ¿Se agregan transacciones y un constraint para visitas?
 9. ¿Se migra el hash de contraseñas?
 10. ¿Se elimina la referencia al `.vdproj` o se recrea el instalador?
-11. ~~¿Se restringe la generación de contratos a propiedades operables?~~ **Resuelto (ADR-015):** sí, con flag `soloOperables` + validación en BLL; pendiente de implementar.
+11. ~~¿Se restringe la generación de contratos a propiedades operables?~~ **Resuelto (ADR-015) e implementado (2026-11-02):** flag `soloOperables` + validación en BLL.
 12. ¿Se agrega `Matrícula Dominial` a `Propiedad` (cambio de esquema y DVH)?
 
 ## 9. Próximos pasos sugeridos (requieren autorización)
@@ -141,7 +143,7 @@ Archivos que **no deben modificarse sin autorización**:
 | Prioridad | Acción | Por qué |
 |---|---|---|
 | 1 | ~~Decidir contratos (PD-01/PD-02)~~ | **hecho**: CUN06/CUN07/CUN08 y reportes implementados |
-| 2 | Implementar la regla de operabilidad RF2 (KI-25/ADR-015) | evita contratos generados sobre propiedades no operables |
+| 2 | ~~Implementar la regla de operabilidad RF2 (KI-25/ADR-015)~~ | **hecho (2026-11-02)**: no se generan contratos sobre propiedades no operables ni duplicados `Pendiente` |
 | 3 | Agregar DDL de `Contrato` y corregir `Visita` (KI-02/KI-03) | permite instalar desde cero |
 | 4 | Corregir orden de DVV en `CrearUsuario` (KI-04) | evita bloqueos de login |
 | 5 | Validar autorización en formularios/BLL (KI-05) | seguridad |

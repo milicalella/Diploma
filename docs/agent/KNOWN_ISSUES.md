@@ -30,7 +30,7 @@
 | KI-22 | Bajo | `scriptTerceraEntrega.sql` se copia a la salida y se ejecuta desde la app | VERIFICADO |
 | KI-23 | Bajo | `ServiceSessionManager` sin lock | VERIFICADO (código) |
 | KI-24 | Bajo | `GestionRespaldo` reinicia la app tras restore | VERIFICADO |
-| KI-25 | Medio | Se pueden generar contratos sobre propiedades no operables | **ABIERTO** (decisión tomada, pendiente de implementación) |
+| KI-25 | Medio | Se pueden generar contratos sobre propiedades no operables | **RESUELTO** (2026-11-02) |
 
 ---
 
@@ -380,15 +380,20 @@ No valida `usuarioActivo`/`Rol` nulos.
 
 ## KI-25 — Contratos generables sobre propiedades no operables
 
-**Estado:** abierto. Decisión tomada el 2026-10-30; falta implementar.
+**Estado:** resuelto el 2026-11-02 (ADR-015 implementado).
 
-**Evidencia:**
-- `SeleccionarPropiedad` en modo selección carga todas las propiedades con `ObtenerTodas()` (`SeleccionarPropiedad.cs:74`).
-- `BLLContrato577MC.ValidarContrato` no valida el estado de la propiedad antes del INSERT.
-- La firma sí lo valida: solo acepta `Disponible` o `Reservada` (`BLLContrato577MC.cs:121-126`), y el DAL lo revalida en la transacción (`DALContrato577MC.cs:162-167`).
+**Evidencia del defecto (histórica):**
+- `SeleccionarPropiedad` en modo selección cargaba todas las propiedades con `ObtenerTodas()`.
+- `BLLContrato577MC.ValidarContrato` no validaba el estado de la propiedad antes del INSERT.
+- La firma sí lo validaba: solo acepta `Disponible` o `Reservada`, y el DAL lo revalida en la transacción.
 
-**Impacto:** se puede generar un contrato `Pendiente` sobre una propiedad `Vendida`/`Alquilada`; al intentar firmarlo, la BLL lo rechaza y el contrato queda inutilizable. Caso real: `C-20261028-0004` (Venta, `Pendiente`) sobre la propiedad 11, que está `Vendida` por `C-20261028-0002`.
+**Impacto:** se podía generar un contrato `Pendiente` sobre una propiedad `Vendida`/`Alquilada`; al intentar firmarlo, la BLL lo rechazaba y el contrato quedaba inutilizable. Caso real: `C-20261028-0004` (Venta, `Pendiente`) sobre la propiedad 11, que está `Vendida` por `C-20261028-0002`.
 
-**Decisión:** mantener la regla de firma y agregar operabilidad en origen (flag `soloOperables` en el selector para contratos, revalidación en `ValidarContrato` y mensaje de CUN08 con propiedad, dirección y estado). Sin cambios de esquema. Detalle en `AGENT.md`, sección 12.
+**Solución implementada:**
+- `SeleccionarPropiedad(bool modoAbm = false, bool soloOperables = false)`: con `soloOperables = true` solo muestra y permite elegir `Disponible`/`Reservada`; el ABM y las visitas conservan el catálogo completo.
+- `FrmGenerarContrato` abre el selector con `soloOperables: true` y revalida al seleccionar y antes de generar.
+- `BLLContrato577MC.ValidarOperabilidadPropiedad(int)` relee la propiedad, rechaza estados no operables y bloquea propiedades con otro contrato `Pendiente` (`DALContrato577MC.ObtenerContratoPendiente`); se invoca desde `ValidarContrato`.
+- `FirmarContrato` acepta `Disponible`/`Reservada` (`EsEstadoOperable`) y el mensaje incluye contrato, propiedad, dirección y estado.
+- Sin cambios de esquema ni de DVH/DVV.
 
 **Datos:** `C-20261028-0004` queda `Pendiente` por decisión del usuario; no bloquea otras propiedades ni la reimpresión.
