@@ -17,7 +17,20 @@ namespace Servicios
 {
     public partial class FrmRegistrarTerminosCondiciones : Form, IIdiomaObserver
     {
-        internal const string MensajeTerminosInvalidos = "Debe completar todos los términos comerciales correctamente";
+        private class ItemCombo
+        {
+            public string Display { get; set; }
+            public string Valor { get; set; }
+        }
+
+        internal static string MensajeTerminosInvalidos
+        {
+            get
+            {
+                return ServiceSessionManager577MC.getIntancia().Idioma
+                    .Translate("FrmRegistrarTerminosCondiciones.msgTerminosInvalidos");
+            }
+        }
 
         BLLContrato577MC _contratoBLL = new BLLContrato577MC();
 
@@ -33,20 +46,12 @@ namespace Servicios
             InitializeComponent();
             ServiceSessionManager577MC.getIntancia().Idioma.Suscribir(this);
             FormClosed += (s, e) => ServiceSessionManager577MC.getIntancia().Idioma.Desuscribir(this);
+            actualizarIdioma();
             Inicializar(terminos);
         }
 
         private void Inicializar(TerminosContrato577MC terminos)
         {
-            cboTipoContrato.Items.Clear();
-            cboTipoContrato.Items.Add("Venta");
-            cboTipoContrato.Items.Add("Alquiler");
-
-            cboFormaPago.Items.Clear();
-            cboFormaPago.Items.Add("Contado");
-            cboFormaPago.Items.Add("Financiado");
-            cboFormaPago.Items.Add("Cuotas");
-
             if (terminos == null)
             {
                 cboTipoContrato.SelectedIndex = -1;
@@ -76,8 +81,56 @@ namespace Servicios
                 return;
             }
 
-            int indice = combo.FindStringExact(valor);
-            combo.SelectedIndex = indice >= 0 ? indice : -1;
+            valor = valor.Trim();
+
+            foreach (ItemCombo item in combo.Items)
+            {
+                if (string.Equals(item.Valor, valor, StringComparison.OrdinalIgnoreCase))
+                {
+                    combo.SelectedItem = item;
+                    return;
+                }
+            }
+
+            combo.SelectedIndex = -1;
+        }
+
+        private void CargarCombos()
+        {
+            var t = ServiceSessionManager577MC.getIntancia().Idioma;
+
+            string tipoActual = ValorSeleccionado(cboTipoContrato);
+            cboTipoContrato.DataSource = new BindingList<ItemCombo>
+            {
+                new ItemCombo { Display = t.Translate("TipoContrato.Venta"), Valor = "Venta" },
+                new ItemCombo { Display = t.Translate("TipoContrato.Alquiler"), Valor = "Alquiler" }
+            };
+            cboTipoContrato.DisplayMember = "Display";
+            cboTipoContrato.ValueMember = "Valor";
+            SeleccionarItem(cboTipoContrato, tipoActual);
+
+            string formaPagoActual = ValorSeleccionado(cboFormaPago);
+            cboFormaPago.DataSource = new BindingList<ItemCombo>
+            {
+                new ItemCombo { Display = t.Translate("FormaPago.Contado"), Valor = "Contado" },
+                new ItemCombo { Display = t.Translate("FormaPago.Financiado"), Valor = "Financiado" },
+                new ItemCombo { Display = t.Translate("FormaPago.Cuotas"), Valor = "Cuotas" }
+            };
+            cboFormaPago.DisplayMember = "Display";
+            cboFormaPago.ValueMember = "Valor";
+            SeleccionarItem(cboFormaPago, formaPagoActual);
+        }
+
+        private static string ValorSeleccionado(ComboBox combo)
+        {
+            string valor = combo.SelectedValue as string;
+
+            if (string.IsNullOrEmpty(valor) && combo.SelectedItem is ItemCombo item)
+            {
+                valor = item.Valor;
+            }
+
+            return valor;
         }
 
         private void btnConfirmarTerminos_Click(object sender, EventArgs e)
@@ -91,8 +144,8 @@ namespace Servicios
 
             TerminosContrato577MC terminos = new TerminosContrato577MC
             {
-                TipoContrato = cboTipoContrato.SelectedItem?.ToString() ?? string.Empty,
-                FormaPago = cboFormaPago.SelectedItem?.ToString() ?? string.Empty,
+                TipoContrato = ValorSeleccionado(cboTipoContrato) ?? string.Empty,
+                FormaPago = ValorSeleccionado(cboFormaPago) ?? string.Empty,
                 FechaInicio = dtpFechaInicio.Value.Date,
                 FechaFin = dtpFechaFin.Value.Date,
                 MontoAcordado = monto,
@@ -124,7 +177,13 @@ namespace Servicios
 
         private void MostrarMensajeTerminosInvalidos()
         {
-            MessageBox.Show(MensajeTerminosInvalidos, "Términos y Condiciones", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            var t = ServiceSessionManager577MC.getIntancia().Idioma;
+
+            MessageBox.Show(
+                t.Translate("FrmRegistrarTerminosCondiciones.msgTerminosInvalidos"),
+                t.Translate("FrmRegistrarTerminosCondiciones.formTitle"),
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Warning);
         }
 
         private void btnCancelar_Click(object sender, EventArgs e)
@@ -135,7 +194,21 @@ namespace Servicios
 
         public void actualizarIdioma()
         {
-            // Textos en español; se mantiene el observador para futuras traducciones.
+            var t = ServiceSessionManager577MC.getIntancia().Idioma;
+
+            this.Text = t.Translate("FrmRegistrarTerminosCondiciones.formTitle");
+            lblTitulo.Text = t.Translate("FrmRegistrarTerminosCondiciones.formTitle");
+            gbTerminos.Text = t.Translate("FrmRegistrarTerminosCondiciones.gbTerminos");
+            lblTipoContrato.Text = t.Translate("FrmRegistrarTerminosCondiciones.lblTipoContrato");
+            lblFormaPago.Text = t.Translate("FrmRegistrarTerminosCondiciones.lblFormaPago");
+            lblFechaInicio.Text = t.Translate("FrmRegistrarTerminosCondiciones.lblFechaInicio");
+            lblFechaFin.Text = t.Translate("FrmRegistrarTerminosCondiciones.lblFechaFin");
+            lblMontoAcordado.Text = t.Translate("FrmRegistrarTerminosCondiciones.lblMontoAcordado");
+            lblDepositoGarantia.Text = t.Translate("FrmRegistrarTerminosCondiciones.lblDepositoGarantia");
+            btnConfirmarTerminos.Text = t.Translate("FrmRegistrarTerminosCondiciones.btnConfirmarTerminos");
+            btnCancelar.Text = t.Translate("FrmRegistrarTerminosCondiciones.btnCancelar");
+
+            CargarCombos();
         }
     }
 }

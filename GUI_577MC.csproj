@@ -174,9 +174,6 @@
     <None Include="obj\Debug\GUI.csproj.AssemblyReference.cache" />
     <None Include="obj\Debug\GUI_55CA.csproj.AssemblyReference.cache" />
     <None Include="README.md" />
-    <None Include="Scripts\scriptTerceraEntrega.sql">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
     <EmbeddedResource Include="AuditoriaBitacora.resx">
       <DependentUpon>AuditoriaBitacora.cs</DependentUpon>
     </EmbeddedResource>
@@ -269,6 +266,7 @@
   <ItemGroup>
     <Folder Include="bin\Debug\Lenguajes\" />
     <Folder Include="obj\Debug\TempPE\" />
+    <Folder Include="Scripts\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

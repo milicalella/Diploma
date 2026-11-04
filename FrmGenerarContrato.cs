@@ -62,16 +62,19 @@ namespace Servicios
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Generar Contrato", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                var t = ServiceSessionManager577MC.getIntancia().Idioma;
+                MessageBox.Show(ex.Message, t.Translate("FrmGenerarContrato.formTitle"), MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         private void MostrarPropiedad(Propiedad577MC propiedad)
         {
+            var t = ServiceSessionManager577MC.getIntancia().Idioma;
+
             txtCodigoPropiedad.Text = propiedad.Id.ToString(CultureInfo.CurrentCulture);
             txtDireccion.Text = propiedad.Direccion;
-            txtTipo.Text = propiedad.Tipo;
-            txtEstado.Text = propiedad.Estado;
+            txtTipo.Text = t.Translate("TipoPropiedad." + propiedad.Tipo);
+            txtEstado.Text = t.Translate("EstadoPropiedad." + propiedad.Estado);
             txtPrecio.Text = propiedad.Precio.ToString("N2", CultureInfo.CurrentCulture);
             txtSuperficie.Text = propiedad.SuperficieM2.ToString("N2", CultureInfo.CurrentCulture);
             txtAmbientes.Text = propiedad.Ambientes.ToString(CultureInfo.CurrentCulture);
@@ -108,20 +111,23 @@ namespace Servicios
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Generar Contrato", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                var t = ServiceSessionManager577MC.getIntancia().Idioma;
+                MessageBox.Show(ex.Message, t.Translate("FrmGenerarContrato.formTitle"), MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         private void MostrarTerminos()
         {
+            var t = ServiceSessionManager577MC.getIntancia().Idioma;
+
             if (_terminos == null)
             {
                 LimpiarTerminos();
                 return;
             }
 
-            txtTipoContrato.Text = _terminos.TipoContrato;
-            txtFormaPago.Text = _terminos.FormaPago;
+            txtTipoContrato.Text = t.Translate("TipoContrato." + _terminos.TipoContrato);
+            txtFormaPago.Text = t.Translate("FormaPago." + _terminos.FormaPago);
             txtFechaInicio.Text = _terminos.FechaInicio.ToString("d", CultureInfo.CurrentCulture);
             txtFechaFin.Text = _terminos.FechaFin.ToString("d", CultureInfo.CurrentCulture);
             txtMontoAcordado.Text = _terminos.MontoAcordado.ToString("N2", CultureInfo.CurrentCulture);
@@ -151,18 +157,20 @@ namespace Servicios
 
         private void RegistrarClienteDesdeBoton(TextBox txtDni)
         {
+            var t = ServiceSessionManager577MC.getIntancia().Idioma;
+
             string dni = txtDni.Text.Trim();
 
             if (string.IsNullOrWhiteSpace(dni))
             {
-                MessageBox.Show("Ingrese el DNI antes de registrar el cliente.", "Generar Contrato", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(t.Translate("FrmGenerarContrato.msgIngresarDni"), t.Translate("FrmGenerarContrato.formTitle"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtDni.Focus();
                 return;
             }
 
             if (_contratoBLL.ClienteExiste(dni))
             {
-                MessageBox.Show("El cliente ya se encuentra registrado.", "Generar Contrato", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show(t.Translate("FrmGenerarContrato.msgClienteYaRegistrado"), t.Translate("FrmGenerarContrato.formTitle"), MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
@@ -177,6 +185,8 @@ namespace Servicios
 
         private bool AsegurarCliente(TextBox txtDni, string rol)
         {
+            var t = ServiceSessionManager577MC.getIntancia().Idioma;
+
             string dni = txtDni.Text.Trim();
 
             if (_contratoBLL.ClienteExiste(dni))
@@ -185,8 +195,8 @@ namespace Servicios
             }
 
             DialogResult respuesta = MessageBox.Show(
-                string.Format("El DNI del {0} ({1}) no se encuentra registrado en el sistema. ¿Desea registrar el cliente ahora?", rol, dni),
-                "Generar Contrato",
+                string.Format(t.Translate("FrmGenerarContrato.msgDniNoRegistrado"), rol, dni),
+                t.Translate("FrmGenerarContrato.formTitle"),
                 MessageBoxButtons.YesNo,
                 MessageBoxIcon.Question);
 
@@ -208,7 +218,7 @@ namespace Servicios
                 return true;
             }
 
-            MessageBox.Show("El cliente no quedó registrado. No se puede generar el contrato.", "Generar Contrato", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            MessageBox.Show(t.Translate("FrmGenerarContrato.msgClienteNoRegistrado"), t.Translate("FrmGenerarContrato.formTitle"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
             return false;
         }
 
@@ -216,37 +226,39 @@ namespace Servicios
         {
             try
             {
+                var t = ServiceSessionManager577MC.getIntancia().Idioma;
+
                 string dniPropietario = txtDNIPropietario.Text.Trim();
                 string dniCliente = txtDNICliente.Text.Trim();
 
                 if (string.IsNullOrWhiteSpace(dniPropietario))
                 {
-                    MessageBox.Show("Debe ingresar el DNI del propietario.", "Generar Contrato", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show(t.Translate("FrmGenerarContrato.msgDebeIngresarDniPropietario"), t.Translate("FrmGenerarContrato.formTitle"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     txtDNIPropietario.Focus();
                     return;
                 }
 
                 if (string.IsNullOrWhiteSpace(dniCliente))
                 {
-                    MessageBox.Show("Debe ingresar el DNI del cliente.", "Generar Contrato", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show(t.Translate("FrmGenerarContrato.msgDebeIngresarDniCliente"), t.Translate("FrmGenerarContrato.formTitle"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     txtDNICliente.Focus();
                     return;
                 }
 
                 if (_propiedadSeleccionada == null)
                 {
-                    MessageBox.Show("Debe seleccionar una propiedad válida.", "Generar Contrato", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show(t.Translate("FrmGenerarContrato.msgDebeSeleccionarPropiedad"), t.Translate("FrmGenerarContrato.formTitle"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
                 _contratoBLL.ValidarOperabilidadPropiedad(_propiedadSeleccionada.Id);
 
-                if (!AsegurarCliente(txtDNIPropietario, "propietario"))
+                if (!AsegurarCliente(txtDNIPropietario, t.Translate("FrmGenerarContrato.rolPropietario")))
                 {
                     return;
                 }
 
-                if (!AsegurarCliente(txtDNICliente, "cliente"))
+                if (!AsegurarCliente(txtDNICliente, t.Translate("FrmGenerarContrato.rolCliente")))
                 {
                     return;
                 }
@@ -256,7 +268,7 @@ namespace Servicios
 
                 if (_terminos == null)
                 {
-                    MessageBox.Show(FrmRegistrarTerminosCondiciones.MensajeTerminosInvalidos, "Generar Contrato", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show(FrmRegistrarTerminosCondiciones.MensajeTerminosInvalidos, t.Translate("FrmGenerarContrato.formTitle"), MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
@@ -277,13 +289,14 @@ namespace Servicios
 
                 _contratoBLL.ValidarYGenerarContrato(contrato);
 
-                MessageBox.Show("Contrato generado con éxito (borrador emitido)", "Generar Contrato", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show(t.Translate("FrmGenerarContrato.msgContratoGenerado"), t.Translate("FrmGenerarContrato.formTitle"), MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 Limpiar();
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message, "Generar Contrato", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                var t = ServiceSessionManager577MC.getIntancia().Idioma;
+                MessageBox.Show(ex.Message, t.Translate("FrmGenerarContrato.formTitle"), MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -304,7 +317,51 @@ namespace Servicios
 
         public void actualizarIdioma()
         {
-            // El formulario usa textos en español; se mantiene el observer para futuras traducciones.
+            var t = ServiceSessionManager577MC.getIntancia().Idioma;
+
+            this.Text = t.Translate("FrmGenerarContrato.formTitle");
+            lblTitulo.Text = t.Translate("FrmGenerarContrato.formTitle");
+
+            gbClientes.Text = t.Translate("FrmGenerarContrato.gbClientes");
+            lblDNIPropietario.Text = t.Translate("FrmGenerarContrato.lblDNIPropietario");
+            btnRegistrarPropietario.Text = t.Translate("FrmGenerarContrato.btnRegistrarPropietario");
+            lblDNICliente.Text = t.Translate("FrmGenerarContrato.lblDNICliente");
+            btnRegistrarCliente.Text = t.Translate("FrmGenerarContrato.btnRegistrarCliente");
+
+            gbPropiedad.Text = t.Translate("FrmGenerarContrato.gbPropiedad");
+            lblCodigoPropiedad.Text = t.Translate("FrmGenerarContrato.lblCodigoPropiedad");
+            btnSeleccionarPropiedad.Text = t.Translate("FrmGenerarContrato.btnSeleccionarPropiedad");
+            lblDireccion.Text = t.Translate("FrmGenerarContrato.lblDireccion");
+            lblTipo.Text = t.Translate("FrmGenerarContrato.lblTipo");
+            lblEstado.Text = t.Translate("FrmGenerarContrato.lblEstado");
+            lblPrecio.Text = t.Translate("FrmGenerarContrato.lblPrecio");
+            lblSuperficie.Text = t.Translate("FrmGenerarContrato.lblSuperficie");
+            lblAmbientes.Text = t.Translate("FrmGenerarContrato.lblAmbientes");
+            lblDormitorios.Text = t.Translate("FrmGenerarContrato.lblDormitorios");
+            lblBanios.Text = t.Translate("FrmGenerarContrato.lblBanios");
+
+            gbTerminos.Text = t.Translate("FrmGenerarContrato.gbTerminos");
+            lblFechaEmision.Text = t.Translate("FrmGenerarContrato.lblFechaEmision");
+            btnTerminosCondiciones.Text = t.Translate("FrmGenerarContrato.btnTerminosCondiciones");
+            lblTipoContrato.Text = t.Translate("FrmGenerarContrato.lblTipoContrato");
+            lblFormaPago.Text = t.Translate("FrmGenerarContrato.lblFormaPago");
+            lblFechaInicio.Text = t.Translate("FrmGenerarContrato.lblFechaInicio");
+            lblFechaFin.Text = t.Translate("FrmGenerarContrato.lblFechaFin");
+            lblMontoAcordado.Text = t.Translate("FrmGenerarContrato.lblMontoAcordado");
+            lblDepositoGarantia.Text = t.Translate("FrmGenerarContrato.lblDepositoGarantia");
+
+            btnGenerarContrato.Text = t.Translate("FrmGenerarContrato.btnGenerarContrato");
+            btnLimpiar.Text = t.Translate("FrmGenerarContrato.btnLimpiar");
+
+            if (_propiedadSeleccionada != null)
+            {
+                MostrarPropiedad(_propiedadSeleccionada);
+            }
+
+            if (_terminos != null)
+            {
+                MostrarTerminos();
+            }
         }
     }
 }

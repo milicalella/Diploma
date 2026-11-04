@@ -22,6 +22,12 @@ namespace BLL
         DALPropiedad577MC _dalPropiedad = new DALPropiedad577MC();
         BLLBitacora577MC _bitacora = new BLLBitacora577MC();
 
+        private static string Tr(string key, params object[] args)
+        {
+            var idioma = Services_577MC.ServiceSessionManager577MC.getIntancia().Idioma;
+            return string.Format(idioma != null ? idioma.Translate(key) : key, args);
+        }
+
         public bool ClienteExiste(string dni)
         {
             if (string.IsNullOrWhiteSpace(dni))
@@ -46,22 +52,22 @@ namespace BLL
         {
             if (idPropiedad <= 0)
             {
-                throw new Exception("Debe seleccionar una propiedad válida.");
+                throw new Exception(Tr("ContratoException.msgPropiedadInvalida"));
             }
 
             Propiedad577MC propiedad = ObtenerPropiedad(idPropiedad);
 
             if (propiedad == null)
             {
-                throw new Exception("La propiedad seleccionada no existe.");
+                throw new Exception(Tr("ContratoException.msgPropiedadNoExiste"));
             }
 
             string estado = (propiedad.Estado ?? string.Empty).Trim();
 
             if (!EsEstadoOperable(estado))
             {
-                throw new Exception(string.Format(
-                    "La propiedad {0} - '{1}' se encuentra en estado '{2}'. Solo se puede generar un contrato para propiedades en estado 'Disponible' o 'Reservada'.",
+                throw new Exception(Tr(
+                    "ContratoException.msgPropiedadNoOperable",
                     propiedad.Id,
                     propiedad.Direccion,
                     estado));
@@ -71,8 +77,8 @@ namespace BLL
 
             if (!string.IsNullOrWhiteSpace(contratoPendiente))
             {
-                throw new Exception(string.Format(
-                    "La propiedad {0} - '{1}' ya tiene un contrato pendiente ({2}). Debe firmarse o cancelarse antes de generar uno nuevo.",
+                throw new Exception(Tr(
+                    "ContratoException.msgPropiedadConContratoPendiente",
                     propiedad.Id,
                     propiedad.Direccion,
                     contratoPendiente));
@@ -93,26 +99,26 @@ namespace BLL
         {
             if (string.IsNullOrWhiteSpace(nroContrato))
             {
-                throw new Exception("Debe seleccionar un contrato pendiente de la grilla.");
+                throw new Exception(Tr("ContratoException.msgDebeSeleccionarContratoPendiente"));
             }
 
             decision = (decision ?? string.Empty).Trim();
 
             if (!EsDecisionValida(decision))
             {
-                throw new Exception("Debe seleccionar el nuevo estado del contrato.");
+                throw new Exception(Tr("ContratoException.msgDebeSeleccionarNuevoEstado"));
             }
 
             Contrato577MC contrato = ObtenerContrato(nroContrato.Trim());
 
             if (contrato == null)
             {
-                throw new Exception("El contrato seleccionado no existe.");
+                throw new Exception(Tr("ContratoException.msgContratoNoExiste"));
             }
 
             if (!string.Equals(contrato.Estado, "Pendiente", StringComparison.OrdinalIgnoreCase))
             {
-                throw new Exception("El contrato ya no se encuentra en estado Pendiente.");
+                throw new Exception(Tr("ContratoException.msgContratoNoPendiente"));
             }
 
             if (string.Equals(decision, "Cancelado", StringComparison.OrdinalIgnoreCase))
@@ -133,7 +139,7 @@ namespace BLL
 
             if (afectadas == 0)
             {
-                throw new Exception("El contrato ya no se encuentra en estado Pendiente.");
+                throw new Exception(Tr("ContratoException.msgContratoNoPendiente"));
             }
 
             DigitoVerificador577MC.ActualizarDVVContrato();
@@ -152,13 +158,13 @@ namespace BLL
 
             if (propiedad == null)
             {
-                throw new Exception("La propiedad asociada al contrato no existe.");
+                throw new Exception(Tr("ContratoException.msgPropiedadContratoNoExiste"));
             }
 
             if (!EsEstadoFirmable(propiedad.Estado))
             {
-                throw new Exception(string.Format(
-                    "No se puede firmar el contrato {0}: la propiedad {1} - '{2}' se encuentra en estado '{3}'. Solo se puede firmar sobre una propiedad 'Disponible' o 'Reservada'.",
+                throw new Exception(Tr(
+                    "ContratoException.msgPropiedadNoFirmable",
                     contrato.NroContrato,
                     propiedad.Id,
                     propiedad.Direccion,
@@ -191,7 +197,7 @@ namespace BLL
 
             if (afectadas == 0)
             {
-                throw new Exception("No se pudo actualizar el contrato ni la propiedad.");
+                throw new Exception(Tr("ContratoException.msgNoSePudoActualizar"));
             }
 
             DigitoVerificador577MC.ActualizarDVVContrato();
@@ -277,8 +283,8 @@ namespace BLL
                 return "Vendida";
             }
 
-            throw new Exception(string.Format(
-                "El tipo de contrato '{0}' no permite actualizar el estado de la propiedad.",
+            throw new Exception(Tr(
+                "ContratoException.msgTipoContratoNoPermiteEstado",
                 tipo));
         }
 
@@ -338,7 +344,7 @@ namespace BLL
         {
             if (terminos == null)
             {
-                throw new Exception("Los términos comerciales son obligatorios.");
+                throw new Exception(Tr("ContratoException.msgTerminosObligatorios"));
             }
 
             terminos.TipoContrato = (terminos.TipoContrato ?? string.Empty).Trim();
@@ -346,32 +352,32 @@ namespace BLL
 
             if (string.IsNullOrWhiteSpace(terminos.TipoContrato))
             {
-                throw new Exception("Debe cargar el tipo de contrato.");
+                throw new Exception(Tr("ContratoException.msgDebeCargarTipoContrato"));
             }
 
             if (string.IsNullOrWhiteSpace(terminos.FormaPago))
             {
-                throw new Exception("Debe cargar la forma de pago.");
+                throw new Exception(Tr("ContratoException.msgDebeCargarFormaPago"));
             }
 
             if (terminos.FechaInicio == DateTime.MinValue || terminos.FechaFin == DateTime.MinValue)
             {
-                throw new Exception("Debe cargar las fechas de inicio y fin del contrato.");
+                throw new Exception(Tr("ContratoException.msgDebeCargarFechas"));
             }
 
             if (terminos.FechaFin <= terminos.FechaInicio)
             {
-                throw new Exception("La fecha de fin debe ser posterior a la fecha de inicio.");
+                throw new Exception(Tr("ContratoException.msgFechaFinPosterior"));
             }
 
             if (terminos.MontoAcordado <= 0)
             {
-                throw new Exception("El monto acordado debe ser mayor a cero.");
+                throw new Exception(Tr("ContratoException.msgMontoMayorCero"));
             }
 
             if (terminos.DepositoGarantia <= 0)
             {
-                throw new Exception("El depósito de garantía debe ser mayor a cero.");
+                throw new Exception(Tr("ContratoException.msgDepositoMayorCero"));
             }
         }
 
@@ -426,7 +432,7 @@ namespace BLL
 
                     if (afectadas == 0)
                     {
-                        throw new Exception("No se pudo generar el contrato.");
+                        throw new Exception(Tr("ContratoException.msgNoSePudoGenerar"));
                     }
 
                     DigitoVerificador577MC.ActualizarDVVContrato();
@@ -451,24 +457,24 @@ namespace BLL
                 }
             }
 
-            throw new Exception("No se pudo generar el contrato: no fue posible asignar un número único.", ultimoError);
+            throw new Exception(Tr("ContratoException.msgNoSePudoGenerarNumero"), ultimoError);
         }
 
         private void ValidarContrato(Contrato577MC contrato)
         {
             if (contrato == null)
             {
-                throw new Exception("Los datos del contrato son obligatorios.");
+                throw new Exception(Tr("ContratoException.msgDatosObligatorios"));
             }
 
             if (string.IsNullOrWhiteSpace(contrato.DNIPropietario))
             {
-                throw new Exception("Debe ingresar el DNI del propietario.");
+                throw new Exception(Tr("ContratoException.msgDebeIngresarDniPropietario"));
             }
 
             if (string.IsNullOrWhiteSpace(contrato.DNICliente))
             {
-                throw new Exception("Debe ingresar el DNI del cliente.");
+                throw new Exception(Tr("ContratoException.msgDebeIngresarDniCliente"));
             }
 
             contrato.DNIPropietario = contrato.DNIPropietario.Trim();
@@ -476,17 +482,17 @@ namespace BLL
 
             if (!ClienteExiste(contrato.DNIPropietario))
             {
-                throw new Exception("El DNI del propietario no se encuentra registrado como cliente.");
+                throw new Exception(Tr("ContratoException.msgDniPropietarioNoRegistrado"));
             }
 
             if (!ClienteExiste(contrato.DNICliente))
             {
-                throw new Exception("El DNI del cliente no se encuentra registrado como cliente.");
+                throw new Exception(Tr("ContratoException.msgDniClienteNoRegistrado"));
             }
 
             if (contrato.CodigoPropiedad <= 0)
             {
-                throw new Exception("Debe seleccionar una propiedad válida.");
+                throw new Exception(Tr("ContratoException.msgPropiedadInvalida"));
             }
 
             ValidarOperabilidadPropiedad(contrato.CodigoPropiedad);

@@ -212,6 +212,7 @@ namespace Servicios
 
                 int idVisita = _visitaBLL.ProgramarVisita(visita);
 
+                visita.IdVisita = idVisita;
                 _ultimoIdVisita = idVisita;
                 RefrescarLabelsInfo();
 

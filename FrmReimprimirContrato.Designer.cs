@@ -76,6 +76,7 @@ namespace Servicios
             this.dgvContratos.Size = new System.Drawing.Size(950, 280);
             this.dgvContratos.TabIndex = 0;
             this.dgvContratos.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgvContratos_CellDoubleClick);
+            this.dgvContratos.CellFormatting += new System.Windows.Forms.DataGridViewCellFormattingEventHandler(this.dgvContratos_CellFormatting);
             this.dgvContratos.SelectionChanged += new System.EventHandler(this.dgvContratos_SelectionChanged);
             // 
             // colNroContrato

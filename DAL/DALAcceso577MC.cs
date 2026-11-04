@@ -12,7 +12,11 @@ namespace DAL
 {
     public class DALAcceso577MC
     {
-        private string _stringConnection => DALConexionConfig577MC.ObtenerConnectionString();
+        //private string _stringConnection => DALConexionConfig577MC.ObtenerConnectionString();
+
+        //private string _stringConnection = "Data Source = LAPTOP-8BNKG482\\SQLEXPRESS;Initial Catalog =is--servicios; Integrated Security = True";
+
+        private string _stringConnection = "Data Source = .\\SQLEXPRESS;Initial Catalog =is--servicios; Integrated Security = True";
 
         private static readonly object LockLog = new object();
 

@@ -10,7 +10,14 @@ namespace Servicios
 {
     public partial class FrmReimprimirContrato : Form, IIdiomaObserver
     {
-        private const string Titulo = "Reimprimir Copia Final";
+        private static string Titulo
+        {
+            get
+            {
+                return ServiceSessionManager577MC.getIntancia().Idioma
+                    .Translate("FrmReimprimirContrato.formTitle");
+            }
+        }
 
         BLLContrato577MC _contratoBLL = new BLLContrato577MC();
 
@@ -86,7 +93,9 @@ namespace Servicios
 
             if (contrato == null)
             {
-                MessageBox.Show("Debe seleccionar un contrato firmado de la grilla.", Titulo,
+                var t = ServiceSessionManager577MC.getIntancia().Idioma;
+
+                MessageBox.Show(t.Translate("FrmReimprimirContrato.msgDebeSeleccionarContrato"), Titulo,
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
@@ -118,9 +127,47 @@ namespace Servicios
             return contrato;
         }
 
+        private void dgvContratos_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (e.RowIndex < 0 || e.Value == null)
+            {
+                return;
+            }
+
+            var t = ServiceSessionManager577MC.getIntancia().Idioma;
+
+            if (dgvContratos.Columns[e.ColumnIndex] == colTipoContrato)
+            {
+                e.Value = t.Translate("TipoContrato." + e.Value);
+                e.FormattingApplied = true;
+            }
+            else if (dgvContratos.Columns[e.ColumnIndex] == colEstado)
+            {
+                e.Value = t.Translate("EstadoContrato." + e.Value);
+                e.FormattingApplied = true;
+            }
+        }
+
         public void actualizarIdioma()
         {
-            // Textos en español; se mantiene el observador para futuras traducciones.
+            var t = ServiceSessionManager577MC.getIntancia().Idioma;
+
+            this.Text = t.Translate("FrmReimprimirContrato.formTitle");
+            lblTitulo.Text = t.Translate("FrmReimprimirContrato.formTitle");
+
+            gbContratos.Text = t.Translate("FrmReimprimirContrato.gbContratos");
+            colNroContrato.HeaderText = t.Translate("FrmReimprimirContrato.colNroContrato");
+            colFechaEmision.HeaderText = t.Translate("FrmReimprimirContrato.colFechaEmision");
+            colDNICliente.HeaderText = t.Translate("FrmReimprimirContrato.colDNICliente");
+            colPropiedadDireccion.HeaderText = t.Translate("FrmReimprimirContrato.colPropiedadDireccion");
+            colTipoContrato.HeaderText = t.Translate("FrmReimprimirContrato.colTipoContrato");
+            colMontoAcordado.HeaderText = t.Translate("FrmReimprimirContrato.colMontoAcordado");
+            colEstado.HeaderText = t.Translate("FrmReimprimirContrato.colEstado");
+
+            btnGenerarPdf.Text = t.Translate("FrmReimprimirContrato.btnGenerarPdf");
+            lblAyuda.Text = t.Translate("FrmReimprimirContrato.lblAyuda");
+
+            dgvContratos.Invalidate();
         }
     }
 }

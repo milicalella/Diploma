@@ -4,6 +4,7 @@ using Services.Modelos.Idioma;
 using Services_577MC;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Globalization;
 using System.Windows.Forms;
 
@@ -11,7 +12,20 @@ namespace Servicios
 {
     public partial class FrmActualizarEstadoPropiedadContrato : Form, IIdiomaObserver
     {
-        private const string Titulo = "Actualizar Estado de Propiedad y Contrato";
+        private static string Titulo
+        {
+            get
+            {
+                return ServiceSessionManager577MC.getIntancia().Idioma
+                    .Translate("FrmActualizarEstadoPropiedadContrato.formTitle");
+            }
+        }
+
+        private class ItemCombo
+        {
+            public string Display { get; set; }
+            public string Valor { get; set; }
+        }
 
         BLLContrato577MC _contratoBLL = new BLLContrato577MC();
 
@@ -21,10 +35,6 @@ namespace Servicios
         public FrmActualizarEstadoPropiedadContrato()
         {
             InitializeComponent();
-
-            cboNuevoEstado.Items.Clear();
-            cboNuevoEstado.Items.Add("Firmado");
-            cboNuevoEstado.Items.Add("Cancelado");
 
             ServiceSessionManager577MC.getIntancia().Idioma.Suscribir(this);
             FormClosed += (s, e) => ServiceSessionManager577MC.getIntancia().Idioma.Desuscribir(this);
@@ -78,11 +88,13 @@ namespace Servicios
 
         private void btnModificarEstado_Click(object sender, EventArgs e)
         {
+            var t = ServiceSessionManager577MC.getIntancia().Idioma;
+
             Contrato577MC contrato = ContratoSeleccionado();
 
             if (contrato == null)
             {
-                MessageBox.Show("Debe seleccionar un contrato pendiente de la grilla.", Titulo,
+                MessageBox.Show(t.Translate("FrmActualizarEstadoPropiedadContrato.msgDebeSeleccionarContrato"), Titulo,
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
@@ -102,20 +114,22 @@ namespace Servicios
 
         private void btnGuardar_Click(object sender, EventArgs e)
         {
+            var t = ServiceSessionManager577MC.getIntancia().Idioma;
+
             try
             {
                 if (_contratoSeleccionado == null)
                 {
-                    MessageBox.Show("Debe seleccionar un contrato pendiente de la grilla.", Titulo,
+                    MessageBox.Show(t.Translate("FrmActualizarEstadoPropiedadContrato.msgDebeSeleccionarContrato"), Titulo,
                         MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
-                string decision = cboNuevoEstado.SelectedItem?.ToString();
+                string decision = ValorSeleccionado(cboNuevoEstado);
 
                 if (string.IsNullOrWhiteSpace(decision))
                 {
-                    MessageBox.Show("Debe seleccionar el nuevo estado del contrato.", Titulo,
+                    MessageBox.Show(t.Translate("FrmActualizarEstadoPropiedadContrato.msgDebeSeleccionarNuevoEstado"), Titulo,
                         MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     cboNuevoEstado.Focus();
                     return;
@@ -130,7 +144,7 @@ namespace Servicios
                 }
                 else
                 {
-                    MessageBox.Show("Contrato cancelado con éxito. La propiedad mantiene su disponibilidad.", Titulo,
+                    MessageBox.Show(t.Translate("FrmActualizarEstadoPropiedadContrato.msgContratoCancelado"), Titulo,
                         MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
 
@@ -161,18 +175,20 @@ namespace Servicios
 
         private void MostrarDetalle(Contrato577MC contrato)
         {
+            var t = ServiceSessionManager577MC.getIntancia().Idioma;
+
             txtNroContrato.Text = contrato.NroContrato;
             txtFechaEmision.Text = contrato.FechaEmision.ToString("d", CultureInfo.CurrentCulture);
-            txtEstadoActual.Text = contrato.Estado;
+            txtEstadoActual.Text = t.Translate("EstadoContrato." + contrato.Estado);
             txtDNIPropietario.Text = contrato.DNIPropietario;
             txtDNICliente.Text = contrato.DNICliente;
             txtCodigoPropiedad.Text = contrato.CodigoPropiedad.ToString(CultureInfo.CurrentCulture);
             txtPropiedadDireccion.Text = contrato.PropiedadDireccion;
-            txtTipoContrato.Text = contrato.TipoContrato;
+            txtTipoContrato.Text = t.Translate("TipoContrato." + contrato.TipoContrato);
             txtFechaInicio.Text = contrato.FechaInicio.ToString("d", CultureInfo.CurrentCulture);
             txtFechaFin.Text = contrato.FechaFin.ToString("d", CultureInfo.CurrentCulture);
             txtMontoAcordado.Text = contrato.MontoAcordado.ToString("N2", CultureInfo.CurrentCulture);
-            txtFormaPago.Text = contrato.FormaPago;
+            txtFormaPago.Text = t.Translate("FormaPago." + contrato.FormaPago);
             txtDepositoGarantia.Text = contrato.DepositoGarantia.ToString("N2", CultureInfo.CurrentCulture);
         }
 
@@ -199,9 +215,121 @@ namespace Servicios
             btnGuardar.Enabled = false;
         }
 
+        private void dgvContratos_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            if (e.RowIndex < 0 || e.Value == null)
+            {
+                return;
+            }
+
+            var t = ServiceSessionManager577MC.getIntancia().Idioma;
+
+            if (dgvContratos.Columns[e.ColumnIndex] == colTipoContrato)
+            {
+                e.Value = t.Translate("TipoContrato." + e.Value);
+                e.FormattingApplied = true;
+            }
+            else if (dgvContratos.Columns[e.ColumnIndex] == colEstado)
+            {
+                e.Value = t.Translate("EstadoContrato." + e.Value);
+                e.FormattingApplied = true;
+            }
+        }
+
+        private void CargarComboEstado()
+        {
+            var t = ServiceSessionManager577MC.getIntancia().Idioma;
+
+            string estadoActual = ValorSeleccionado(cboNuevoEstado);
+
+            cboNuevoEstado.DataSource = new BindingList<ItemCombo>
+            {
+                new ItemCombo { Display = t.Translate("EstadoContrato.Firmado"), Valor = "Firmado" },
+                new ItemCombo { Display = t.Translate("EstadoContrato.Cancelado"), Valor = "Cancelado" }
+            };
+            cboNuevoEstado.DisplayMember = "Display";
+            cboNuevoEstado.ValueMember = "Valor";
+            SeleccionarItemPorValor(cboNuevoEstado, estadoActual);
+        }
+
+        private static string ValorSeleccionado(ComboBox combo)
+        {
+            string valor = combo.SelectedValue as string;
+
+            if (string.IsNullOrEmpty(valor) && combo.SelectedItem is ItemCombo item)
+            {
+                valor = item.Valor;
+            }
+
+            return valor;
+        }
+
+        private static void SeleccionarItemPorValor(ComboBox combo, string valor)
+        {
+            if (string.IsNullOrWhiteSpace(valor))
+            {
+                combo.SelectedIndex = -1;
+                return;
+            }
+
+            foreach (ItemCombo item in combo.Items)
+            {
+                if (string.Equals(item.Valor, valor, StringComparison.OrdinalIgnoreCase))
+                {
+                    combo.SelectedItem = item;
+                    return;
+                }
+            }
+
+            combo.SelectedIndex = -1;
+        }
+
         public void actualizarIdioma()
         {
-            // Textos en español; se mantiene el observador para futuras traducciones.
+            var t = ServiceSessionManager577MC.getIntancia().Idioma;
+
+            this.Text = t.Translate("FrmActualizarEstadoPropiedadContrato.formTitle");
+            lblTitulo.Text = t.Translate("FrmActualizarEstadoPropiedadContrato.formTitle");
+
+            gbContratos.Text = t.Translate("FrmActualizarEstadoPropiedadContrato.gbContratos");
+            colNroContrato.HeaderText = t.Translate("FrmActualizarEstadoPropiedadContrato.colNroContrato");
+            colFechaEmision.HeaderText = t.Translate("FrmActualizarEstadoPropiedadContrato.colFechaEmision");
+            colDNICliente.HeaderText = t.Translate("FrmActualizarEstadoPropiedadContrato.colDNICliente");
+            colPropiedadDireccion.HeaderText = t.Translate("FrmActualizarEstadoPropiedadContrato.colPropiedadDireccion");
+            colTipoContrato.HeaderText = t.Translate("FrmActualizarEstadoPropiedadContrato.colTipoContrato");
+            colFechaInicio.HeaderText = t.Translate("FrmActualizarEstadoPropiedadContrato.colFechaInicio");
+            colFechaFin.HeaderText = t.Translate("FrmActualizarEstadoPropiedadContrato.colFechaFin");
+            colMontoAcordado.HeaderText = t.Translate("FrmActualizarEstadoPropiedadContrato.colMontoAcordado");
+            colEstado.HeaderText = t.Translate("FrmActualizarEstadoPropiedadContrato.colEstado");
+
+            gbDetalle.Text = t.Translate("FrmActualizarEstadoPropiedadContrato.gbDetalle");
+            lblNroContrato.Text = t.Translate("FrmActualizarEstadoPropiedadContrato.lblNroContrato");
+            lblFechaEmision.Text = t.Translate("FrmActualizarEstadoPropiedadContrato.lblFechaEmision");
+            lblEstadoActual.Text = t.Translate("FrmActualizarEstadoPropiedadContrato.lblEstadoActual");
+            lblDNIPropietario.Text = t.Translate("FrmActualizarEstadoPropiedadContrato.lblDNIPropietario");
+            lblDNICliente.Text = t.Translate("FrmActualizarEstadoPropiedadContrato.lblDNICliente");
+            lblCodigoPropiedad.Text = t.Translate("FrmActualizarEstadoPropiedadContrato.lblCodigoPropiedad");
+            lblPropiedadDireccion.Text = t.Translate("FrmActualizarEstadoPropiedadContrato.lblPropiedadDireccion");
+            lblTipoContrato.Text = t.Translate("FrmActualizarEstadoPropiedadContrato.lblTipoContrato");
+            lblFechaInicio.Text = t.Translate("FrmActualizarEstadoPropiedadContrato.lblFechaInicio");
+            lblFechaFin.Text = t.Translate("FrmActualizarEstadoPropiedadContrato.lblFechaFin");
+            lblMontoAcordado.Text = t.Translate("FrmActualizarEstadoPropiedadContrato.lblMontoAcordado");
+            lblFormaPago.Text = t.Translate("FrmActualizarEstadoPropiedadContrato.lblFormaPago");
+            lblDepositoGarantia.Text = t.Translate("FrmActualizarEstadoPropiedadContrato.lblDepositoGarantia");
+
+            gbDecision.Text = t.Translate("FrmActualizarEstadoPropiedadContrato.gbDecision");
+            lblNuevoEstado.Text = t.Translate("FrmActualizarEstadoPropiedadContrato.lblNuevoEstado");
+            btnModificarEstado.Text = t.Translate("FrmActualizarEstadoPropiedadContrato.btnModificarEstado");
+            btnGuardar.Text = t.Translate("FrmActualizarEstadoPropiedadContrato.btnGuardar");
+
+            CargarComboEstado();
+
+            if (_contratoSeleccionado != null)
+            {
+                MostrarDetalle(_contratoSeleccionado);
+            }
+
+            dgvContratos.Invalidate();
         }
     }
 }
